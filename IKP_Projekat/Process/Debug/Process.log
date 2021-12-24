@@ -1,0 +1,5 @@
+﻿  Process.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(62,11): warning C4477: 'scanf_s' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(62,11): message : consider using '%hd' in the format string
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(87,47): warning C4302: 'type cast': truncation from 'short *' to 'short'
+  Process.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Process.exe
