@@ -2,19 +2,14 @@
 
 // TCP client that use non-blocking sockets
 void StartProcess() {
-	// Unos potrebnih podataka koji ce se poslati serveru
-	
+	// Unos potrebnih podataka koji ce se poslati serveru	
 	RegisterService();
-}
-void Menu() {
-	while (true) {
-		printf("");
-	}
 }
 int main()
 {
-	
 	StartProcess();
-	Menu();
+	printf("Process sucssesfuly closed.");
+	printf("Press any key to close program.");
+	_getch();
 	return 0;
 }

@@ -20,8 +20,8 @@
 
 
 #define SERVER_PORT 27016
-#define BUFFER_SIZE 256
-#define MAX_CLIENTS 3
+#define BUFFER_SIZE 4096
+#define MAX_CLIENTS 10
 
 struct port {
     int val;
@@ -46,7 +46,7 @@ struct clientConnection{
 void ListenForRegistrations();
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
 
-int RegisterService(struct process);
+bool RegisterService(struct process);
 
 void SendData(int serviceId, void* data, int dataSize);
 

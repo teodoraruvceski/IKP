@@ -1,17 +1,19 @@
 #include "ReplicatorPrimHeader.h"
 
-int RegisterService(struct process newProcess) {
-	if (find(newProcess.id) == NULL)
+bool RegisterService(struct process newProcess) {
+	if (find(newProcess.id) == NULL) {
 		insertFirst(newProcess.id, newProcess.ipAddr, newProcess.port);
+		return true;
+	}
 	else
 	{
 		if (update(newProcess.id, newProcess.ipAddr, newProcess.port))
 		{
 			printf("Updated.");
-			return FindEmptyPort();
+			return true;
 		}
 	}
-	return -1;
+	return false;
 }
 
 

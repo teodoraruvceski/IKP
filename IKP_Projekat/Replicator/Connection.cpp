@@ -3,8 +3,8 @@
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
 void ListenForRegistrations() 
 {
-	DWORD ListenForRegistrationsThreadID[50];
-	HANDLE hListenForRegistrationsThread[50];
+	DWORD ListenForRegistrationsThreadID[MAX_CLIENTS];
+	HANDLE hListenForRegistrationsThread[MAX_CLIENTS];
 	int threadNum = 0;
 	//hListenForRegistrationsThread = CreateThread(NULL, 0, &ListenForRegistrationsThread, &listenSocket, 0, &ListenForRegistrationsThreadID);
 
@@ -102,16 +102,8 @@ void ListenForRegistrations()
 	timeval timeVal;
 	timeVal.tv_sec = 1;
 	timeVal.tv_usec = 0;
-
-
 	//char* message;
 	//struct process newProcess;
-
-	
-
-
-
-
 	while (true)
 	{
 		// initialize socket set
@@ -176,94 +168,17 @@ void ListenForRegistrations()
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
-				struct clientConnection cc;
+				struct clientConnection cc; //mpoguca greska da se prepise nove=a preko stare strukture
 				cc.clientSocket = clientSockets[lastIndex];
 				cc.clientAddr = clientAddr;
 				hListenForRegistrationsThread[threadNum] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &cc, 0, &ListenForRegistrationsThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
-				_getch();
-				for (int i = 0;i < threadNum;i++)
-					CloseHandle(hListenForRegistrationsThread[i]);
-				/*char* newAddr = inet_ntoa(clientAddr.sin_addr);
-				strcpy(newProcess.ipAddr, newAddr);
-				newProcess.port = ntohs(clientAddr.sin_port);
-				printf("New client request accepted (%d). Client address: %s : %d\n", lastIndex, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));*/
 			}
 		}
-		//else
-		//{
-		//	// Check if new message is received from connected clients
-		//	for (int i = 0; i < lastIndex; i++)
-		//	{
-		//		// Check if new message is received from client on position "i"
-		//		if (FD_ISSET(clientSockets[i], &readfds))
-		//		{
-		//			iResult = recv(clientSockets[i], dataBuffer, BUFFER_SIZE, 0);
-		//			if (iResult > 0)
-		//			{
-		//				dataBuffer[iResult] = '\0';
-		//				printf("Message received from client (%d):\n", i + 1);
-		//				message = dataBuffer;
-		//				short *pom = ((short*)(message));
-		//				newProcess.id =* pom;
-		//				printf("Registration message %d \n", *pom);
-		//				printf("_______________________________  \n");
-		//				int newPort = RegisterService(newProcess);
-		//				newPort = htons(newPort);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
-		//				getchar();    //pokupiti enter karakter iz bafera tastature
-
-
-
-		//				iResult = send(clientSockets[i], (char*)&newPort, (int)sizeof(int), 0);
-
-		//				// Check result of send function
-		//				if (iResult == SOCKET_ERROR)
-		//				{
-		//					printf("send failed with error: %d\n", WSAGetLastError());
-		//					closesocket(clientSockets[i]);
-		//					WSACleanup();
-		//					//return 0;
-		//					return;
-		//				}
-
-		//				printf("Response successfully sent. Total bytes: %ld\n", iResult);
-		//			}
-		//			else if (iResult == 0)
-		//			{
-		//				// connection was closed gracefully
-		//				printf("Connection with client (%d) closed.\n", i + 1);
-		//				closesocket(clientSockets[i]);
-
-		//				// sort array and clean last place
-		//				for (int j = i; j < lastIndex - 1; j++)
-		//				{
-		//					clientSockets[j] = clientSockets[j + 1];
-		//				}
-		//				clientSockets[lastIndex - 1] = 0;
-
-		//				lastIndex--;
-		//			}
-		//			else
-		//			{
-		//				// there was an error during recv
-		//				printf("recv failed with error: %d\n", WSAGetLastError());
-		//				closesocket(clientSockets[i]);
-
-		//				// sort array and clean last place
-		//				for (int j = i; j < lastIndex - 1; j++)
-		//				{
-		//					clientSockets[j] = clientSockets[j + 1];
-		//				}
-		//				clientSockets[lastIndex - 1] = 0;
-
-		//				lastIndex--;
-		//			}
-		//		}
-		//	}
-		//}
 	}
-
+	for (int i = 0;i < threadNum;i++)
+		CloseHandle(hListenForRegistrationsThread[i]);
 	//Close listen and accepted sockets
 	closesocket(listenSocket);
 
@@ -273,51 +188,86 @@ void ListenForRegistrations()
 
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 {
-	
-	SOCKET clientSocket = (*(clientConnection*)(lpParams)).clientSocket;
-	sockaddr_in clientAddr= (*(clientConnection*)(lpParams)).clientAddr;
-	// Sockets used for communication with client
-	
 
+	SOCKET clientSocket = (*(clientConnection*)(lpParams)).clientSocket;
+	sockaddr_in clientAddr = (*(clientConnection*)(lpParams)).clientAddr;
+	// Sockets used for communication with client
+
+	bool flag = false;
 	char* message;
 	struct process newProcess;
-	char dataBuffer[BUFFER_SIZE];
-	int iResult;
+	
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
 	strcpy(newProcess.ipAddr, newAddr);
 	newProcess.port = ntohs(clientAddr.sin_port);
 	printf("New client request accepted . Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+	
 	while (1)
 	{
+		char dataBuffer[BUFFER_SIZE];
+		int iResult;
+		if (flag==false)
+		{
+			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+			if (iResult > 0)
+			{
+				dataBuffer[iResult] = '\0';
+				//printf("Message received from client:\n");
+				message = dataBuffer;
+				short* pom = ((short*)(message));
+				newProcess.id = ntohs(*pom);
+				printf("Registration message %d \n", newProcess.id);
+				flag = true;
+				printf("_______________________________  \n");
+				int newPort = RegisterService(newProcess); //cuvanje 
+				if (iResult == SOCKET_ERROR)
+				{
+					printf("send failed with error: %d\n", WSAGetLastError());
+					closesocket(clientSocket);
+					WSACleanup();
+					return 0;
+					//return;
+				}
+				printf("Response successfully sent. Total bytes: %ld\n", iResult);
+				continue;
+			}
+			else if (iResult == 0)
+			{
+				// connection was closed gracefully
+				printf("Connection with client closed.\n");
+				closesocket(clientSocket);
+			}
+			else
+			{
+				// there was an error during recv
+				//printf("recv failed with error: %d RECIVING ID\n", WSAGetLastError());
+				//closesocket(clientSocket);
+			}
+		}
 		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
 		if (iResult > 0)
 		{
 			dataBuffer[iResult] = '\0';
 			printf("Message received from client\n");
 			message = dataBuffer;
-			short* pom = ((short*)(message));
-			newProcess.id = ntohs(*pom);
-			printf("Registration message %d \n", newProcess.id);
-			printf("_______________________________  \n");
-			int newPort = RegisterService(newProcess);
-			newPort = htons(newPort);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
-			//getchar();    //pokupiti enter karakter iz bafera tastature
+			if (strcmp(message, "get_data_from_replica")==0) {
 
 
 
-			iResult = send(clientSocket, (char*)&newPort, (int)sizeof(int), 0);
-
-			// Check result of send function
-			if (iResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(clientSocket);
-				WSACleanup();
-				return 0;
-				//return;
+				//iResult = send(clientSocket, (char*)&newPort, (int)sizeof(int), 0);
+				//if (iResult == SOCKET_ERROR)
+				//{
+				//	printf("send failed with error: %d\n", WSAGetLastError());
+				//	closesocket(clientSocket);
+				//	WSACleanup();
+				//	return 0;
+				//	//return;
+				//}
+				//printf("Response successfully sent. Total bytes: %ld\n", iResult);
 			}
-
-			printf("Response successfully sent. Total bytes: %ld\n", iResult);
+			else{
+				printf("\nPoruka %s", message);
+			}
 		}
 		else if (iResult == 0)
 		{
@@ -327,17 +277,16 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 		}
 		else
 		{
-			// there was an error during recv
-			//printf("recv failed with error: %d\n", WSAGetLastError());
+			//there was an error during recv
+			//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
 			//closesocket(clientSocket);
-
-
 		}
 		//Close listen and accepted sockets
 		//closesocket(listenSocket);
 
-		
+
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+
 }
