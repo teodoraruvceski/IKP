@@ -12,21 +12,24 @@
 
 #include <iostream> 
 #include "Map.h"
+#include "RingBuffer.h"
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 #pragma warning(disable:4996) 
 #pragma pack(1)
 
-
+#define SERVER_IP_ADDRESS "127.0.0.1"
 #define SERVER_PORT 27016
-#define BUFFER_SIZE 4096
+#define SERVER_PORT2 27017
 #define MAX_CLIENTS 10
+#define NUMOF_THREADS 3
 
 struct port {
     int val;
     bool ind;
 };
+
 
 static struct port ports[MAX_CLIENTS];
 
@@ -45,6 +48,9 @@ struct clientConnection{
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
 void ListenForRegistrations();
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
+
+void ConncectWithReplicator2();
+DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams);
 
 bool RegisterService(struct process);
 

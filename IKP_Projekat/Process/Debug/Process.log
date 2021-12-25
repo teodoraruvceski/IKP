@@ -1,5 +1,4 @@
 ﻿  Process.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(14,12): warning C4129: '.': unrecognized character escape sequence
 C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(15,25): warning C4474: 'scanf' : too many arguments passed for format string
 C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(15,25): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
 C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(76,10): warning C4477: 'scanf_s' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'

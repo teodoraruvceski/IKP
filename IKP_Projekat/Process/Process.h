@@ -21,15 +21,16 @@
 #define BUFFER_SIZE 4096
 #define MESSAGE_LEN 40
 
-
-
-
 struct process {
     char ipAddr[15];
     int port;
     int id;
 };
 
+struct message {
+    char text[MESSAGE_LEN];
+    short serviceId;
+};
 
 void RegisterService();
 

@@ -31,7 +31,7 @@ char* Menu() {
 void SendData(int serviceId, void* data, int dataSize) {}
 
 void RecieveData(void* data, int dataSize) {}
-
+//TREBALO BI IZ DONJE POZIVATI FUNKCIJE GORE ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void RegisterService() {
 	// Socket used to communicate with server
 	SOCKET connectSocket = INVALID_SOCKET;
@@ -92,10 +92,16 @@ void RegisterService() {
 	while (true)
 	{
 		int option;
-		char message[MESSAGE_LEN];
-		strcpy(message,Menu());//Dobavljanje komande koju saljemo replicator1
-		if (strcmp(message, "get_data_from_replica")==0) {
-			iResult = send(connectSocket, message, strlen(message), 0);
+		struct message messageForRepl;
+
+		//char message[MESSAGE_LEN];
+		strcpy(messageForRepl.text,Menu());//Dobavljanje komande koju saljemo replicator1
+		messageForRepl.serviceId = serviceId;
+		//messageForRepl.serviceId = htons(messageForRepl.serviceId); vec je gore uradjen htons nad serviceId
+		
+		//printf("ID... id %d", messageForRepl.serviceId);
+		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
+			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(messageForRepl), 0);
 			// Check result of send function
 			if (iResult == SOCKET_ERROR)
 			{
@@ -111,11 +117,14 @@ void RegisterService() {
 			char* message = dataBuffer;
 			printf("OVDJE ISPISATI PODATKE KOJE JE VRATIO REPLICATOR");
 		}
-		else if(strcmp(message, "turn_off")==0){
-			break;
+		else if(strcmp(messageForRepl.text, "turn_off")==0){
+			closesocket(connectSocket);
+			// Deinitialize WSA library
+			WSACleanup();
+			return;
 		}
 		else{
-			iResult = send(connectSocket, message, sizeof(message), 0);
+			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(struct message), 0);
 			// Check result of send function
 			if (iResult == SOCKET_ERROR)
 			{
@@ -124,8 +133,7 @@ void RegisterService() {
 				WSACleanup();
 				return;
 			}
-			printf("bytes sent %d\n", iResult);
-			printf("Message %s sucssesfuly sent to replicator.",message);
+			printf("Message %s sucssesfuly sent to replicator. ID = %d",messageForRepl.text,messageForRepl.serviceId);
 		}		
 	}
 	// Shutdown the connection since we're done
@@ -143,4 +151,5 @@ void RegisterService() {
 	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
+	return;
 }

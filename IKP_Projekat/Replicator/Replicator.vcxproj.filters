@@ -21,6 +21,9 @@
     <ClInclude Include="ReplicatorPrimHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RingBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map.cpp">
@@ -29,10 +32,16 @@
     <ClCompile Include="ReplicatorFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Connection.cpp">
+    <ClCompile Include="ConnectionWithService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RingBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConncetionWithReplicator2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

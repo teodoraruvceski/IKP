@@ -8,8 +8,8 @@ void StartProcess() {
 int main()
 {
 	StartProcess();
-	printf("Process sucssesfuly closed.");
-	printf("Press any key to close program.");
+	printf("Process sucssesfuly closed.\n");
+	printf("Press any key to close program . . .\n");
 	_getch();
 	return 0;
 }
