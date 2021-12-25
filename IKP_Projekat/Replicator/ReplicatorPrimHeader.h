@@ -9,7 +9,6 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "conio.h"
-
 #include <iostream> 
 #include "Map.h"
 #include "RingBuffer.h"
@@ -24,6 +23,9 @@
 #define SERVER_PORT2 27017
 #define MAX_CLIENTS 10
 #define NUMOF_THREADS 3
+
+//globalna promenljiva buffera
+ //RingBuffer* storingBuffer;
 
 struct port {
     int val;
@@ -40,9 +42,11 @@ struct process {
     int id;
 };
 
-struct clientConnection{
+struct ThreadArgs{
     SOCKET clientSocket;
     sockaddr_in clientAddr;
+    RingBuffer* storingBuffer;
+    RingBufferRetrieved* retrievingBuffer;
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);

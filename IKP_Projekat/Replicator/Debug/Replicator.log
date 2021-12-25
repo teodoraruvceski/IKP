@@ -1,3 +1,15 @@
 ﻿  ConncetionWithReplicator2.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(17,7): warning C4101: 'dataBuffer': unreferenced local variable
-  Replicator.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator.exe
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(17,7): warning C4101: 'dataBuffer': unreferenced local variable
+  ConnectionWithService.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(35,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(188,10): warning C4101: 'args': unreferenced local variable
+  Map.cpp
+  ReplicatorFunctions.cpp
+  RingBuffer.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(19,19): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(16,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(15,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
+  Generating Code...
+ConnectionWithService.obj : error LNK2019: unresolved external symbol "struct retrievedData __cdecl ringBufReadRetrievedData(struct RingBufferRetrieved *)" (?ringBufReadRetrievedData@@YA?AUretrievedData@@PAURingBufferRetrieved@@@Z) referenced in function "unsigned long __stdcall ListenForRegistrationsThread(void *)" (?ListenForRegistrationsThread@@YGKPAX@Z)
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe : fatal error LNK1120: 1 unresolved externals

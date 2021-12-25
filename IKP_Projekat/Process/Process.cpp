@@ -74,7 +74,7 @@ void RegisterService() {
 	short serviceId;
 	printf("Unesite id procesa: ");
 	scanf_s("%d", &serviceId);
-	serviceId =(short) htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
+	serviceId =htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
 	//getchar();    //pokupiti enter karakter iz bafera tastature
 	// Slanje pripremljene poruke zapisane unutar strukture studentInfo
 	//prosledjujemo adresu promenljive student u memoriji, jer se na toj adresi nalaze podaci koje saljemo
@@ -97,7 +97,6 @@ void RegisterService() {
 		//char message[MESSAGE_LEN];
 		strcpy(messageForRepl.text,Menu());//Dobavljanje komande koju saljemo replicator1
 		messageForRepl.serviceId = serviceId;
-		//messageForRepl.serviceId = htons(messageForRepl.serviceId); vec je gore uradjen htons nad serviceId
 		
 		//printf("ID... id %d", messageForRepl.serviceId);
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {

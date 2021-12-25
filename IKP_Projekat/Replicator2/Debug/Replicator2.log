@@ -1,8 +1,1 @@
-﻿  ConncetionWithReplicator1.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(18,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(191,8): warning C4101: 'message': unreferenced local variable
-  RingBuffer.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\RingBuffer.cpp(16,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
-  main.cpp
-  Generating Code...
-  Replicator2.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator2.exe
+﻿  Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator2.exe
