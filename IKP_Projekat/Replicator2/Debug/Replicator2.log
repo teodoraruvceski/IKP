@@ -1,1 +1,4 @@
-﻿  Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator2.exe
+﻿  ConncetionWithReplicator1.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(191,8): warning C4101: 'message': unreferenced local variable
+  Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator2.exe

@@ -1,7 +1,7 @@
 #include "ReplicatorPrimHeader.h"
 
 
-void ConncectWithReplicator2() {
+void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs) {
 	// Socket used to communicate with server
 	DWORD ConncectWithReplicator2ThreadID[NUMOF_THREADS];
 	HANDLE hConncectWithReplicator2Thread[NUMOF_THREADS];
@@ -48,7 +48,12 @@ void ConncectWithReplicator2() {
 			WSACleanup();
 			return;
 		}
-		hConncectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &ConncectWithReplicator2Thread, &connectSocket[numOfConnected], 0, &ConncectWithReplicator2ThreadID[numOfConnected]);
+		ThreadArgs threadArgs;
+		threadArgs.clientSocket = connectSocket[numOfConnected];
+		threadArgs.storingBuffer = storingBuffer;
+		threadArgs.retrievingBuffer = retrievingBuffer;
+		threadArgs.cs = cs;
+		hConncectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &ConncectWithReplicator2Thread, &threadArgs, 0, &ConncectWithReplicator2ThreadID[numOfConnected]);
 		
 		numOfConnected++;
 	}
@@ -56,10 +61,67 @@ void ConncectWithReplicator2() {
 
 
 DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
-	SOCKET connectSocket = *(SOCKET*)lpParams;
-	printf("Konektovan na replicator dva");
-	_getch();
-	return 0;
+	int iResult;
+	message m;
+	printf("Nit konektovana na replicator2.\n");
+	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	Sleep(3000);
+	
+	while (1)
+	{
+		char dataBuffer[BUFFER_SIZE];
+		m = ringBufGetMessage(storingBuffer, cs);
+		printf("Cheking for messages to send...\n");
+		Sleep(10000);
+		if (m.processId == -1)
+			continue;
+		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
+		// Check result of send function
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(connectSocket);
+			WSACleanup();
+			break;
+		}
+		if (strcmp(m.text, "get_data_from_replica") == 0)
+		{
+			
+			printf("Sent request for retrieving data. Process waiting for response from replicator2.");
+			iResult = recv(connectSocket, dataBuffer, BUFFER_SIZE, 0);
+			dataBuffer[iResult] = '\0';
+			printf("Process received from server: ");
+			retrievedData response = *(retrievedData*)dataBuffer;
+			//printf("OVDJE ISPISATI PODATKE KOJE JE VRATIO REPLICATOR");//ne znam kako **char da ispisem :)))
+			ringBufPutRetrievedData(retrievingBuffer, response,cs);
+			printBufferRetrievedData(*retrievingBuffer,cs);
+			
+		}
+		else
+		{
+			printf("Sent data to replicator2.");
+		}
+	}
+	// Shutdown the connection since we're done
+	iResult = shutdown(connectSocket, SD_BOTH);
+	// Check if connection is succesfully shut down.
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("Shutdown failed with error: %d\n", WSAGetLastError());
+		closesocket(connectSocket);
+		WSACleanup();
+		return -1;
+	}
+	Sleep(1000);
+	// Close connected socket
+	closesocket(connectSocket);
+	// Deinitialize WSA library
+	WSACleanup();
+
+
 	//int iResult;
 	//short serviceId;
 	//printf("Unesite id procesa: ");
@@ -123,19 +185,5 @@ DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
 	//		printf("Message %s sucssesfuly sent to replicator. ID = %d", messageForRepl.text, messageForRepl.serviceId);
 	//	}
 	//}
-	//// Shutdown the connection since we're done
-	//iResult = shutdown(connectSocket, SD_BOTH);
-	//// Check if connection is succesfully shut down.
-	//if (iResult == SOCKET_ERROR)
-	//{
-	//	printf("Shutdown failed with error: %d\n", WSAGetLastError());
-	//	closesocket(connectSocket);
-	//	WSACleanup();
-	//	return;
-	//}
-	//Sleep(1000);
-	//// Close connected socket
-	//closesocket(connectSocket);
-	//// Deinitialize WSA library
-	//WSACleanup();
+	
 }

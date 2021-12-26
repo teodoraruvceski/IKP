@@ -47,13 +47,14 @@ struct ThreadArgs{
     sockaddr_in clientAddr;
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
+    CRITICAL_SECTION* cs;
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForRegistrations();
+void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
 
-void ConncectWithReplicator2();
+void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
 DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams);
 
 bool RegisterService(struct process);

@@ -3,6 +3,7 @@
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
 void ListenForReplicator1Registrations()
 {
+	clientConnection clientConnections[NUMOF_THREADS];
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
 	HANDLE hListenForReplicator1Thread[NUMOF_THREADS];
 	int threadNum = 0;
@@ -162,10 +163,9 @@ void ListenForReplicator1Registrations()
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
-				struct clientConnection cc; //mpoguca greska da se prepise nove=a preko stare strukture
-				cc.clientSocket = clientSockets[lastIndex];
-				cc.clientAddr = clientAddr;
-				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &cc, 0, &ListenForReplicator1ThreadID[threadNum]);
+				clientConnections[threadNum].clientSocket = clientSockets[lastIndex];
+				clientConnections[threadNum].clientAddr = clientAddr;
+				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &clientConnections[threadNum], 0, &ListenForReplicator1ThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
 			}

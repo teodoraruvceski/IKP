@@ -8,15 +8,31 @@
 
 #include "ReplicatorPrimHeader.h"
 // TCP server that use non-blocking sockets
+
 int main()
 {
+	CRITICAL_SECTION cs;
+	InitializeCriticalSection(&cs);
+	RingBuffer storingBuffer;
+	RingBufferRetrieved retrievingBuffer;
+
+	retrievingBuffer.head = 0;
+	retrievingBuffer.tail = 0;
+
+	storingBuffer.head = 0;
+	storingBuffer.tail = 0;
+
+	/*ThreadArgs threadArgs;
+	threadArgs.storingBuffer = &storingBuffer;
+	threadArgs.retrievingBuffer = &retrievingBuffer;*/
 
 	InitializePorts();//dodao da bi mogli da imamo 10 portova struct{brporta , indikator je li zauzet}
 	DWORD ListenForRegistrationsID;
 	HANDLE hListenForRegistrations;
+
 	//hListenForRegistrations = CreateThread(NULL, 0, &ListenForRegistrations, NULL, 0, &ListenForRegistrationsID);
-	ConncectWithReplicator2();
-	ListenForRegistrations();
+	ConncectWithReplicator2(&storingBuffer,&retrievingBuffer,&cs);
+	ListenForRegistrations(&storingBuffer, &retrievingBuffer,&cs);
 	_getch();
 
 	//CloseHandle(hListenForRegistrations);

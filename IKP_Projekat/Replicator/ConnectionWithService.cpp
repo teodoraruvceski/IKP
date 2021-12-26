@@ -1,19 +1,9 @@
 #include "ReplicatorPrimHeader.h"
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
-void ListenForRegistrations() 
+void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
-	RingBuffer* storingBuffer;
-	RingBuffer _storingBuffer;
-	RingBufferRetrieved retrievingBuffer;
-	retrievingBuffer.head = 0;
-	retrievingBuffer.tail = 0;
-
-	_storingBuffer.head = 0;
-	_storingBuffer.tail = 0;
-	storingBuffer = &_storingBuffer;
-
-
+	
 	DWORD ListenForRegistrationsThreadID[MAX_CLIENTS];
 	HANDLE hListenForRegistrationsThread[MAX_CLIENTS];
 	ThreadArgs threadArgs[MAX_CLIENTS];
@@ -184,7 +174,8 @@ void ListenForRegistrations()
 				threadArgs[lastIndex].clientAddr= clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
 				threadArgs[lastIndex].clientSocket = clientSockets[lastIndex];
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
-				threadArgs[lastIndex].retrievingBuffer = &retrievingBuffer;
+				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
+				threadArgs[lastIndex].cs = cs;
 				char args[8];
 				//memset(args, (int)&cc, 4);
 				//memset(args+4, (int)storingBuffer, 4);
@@ -213,6 +204,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
 	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs= (*(ThreadArgs*)(lpParams)).cs;
 	// Sockets used for communication with client
 
 	bool flag = false;
@@ -282,14 +274,14 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 
 					
 					printf("Process with id %d requested retrieving data.\n", processId);
-					ringBufPutMessage(storingBuffer, newMessage);
-					printBuffer(*storingBuffer);
+					ringBufPutMessage(storingBuffer, newMessage,cs);
+					printBuffer(*storingBuffer,cs);
 					while (1)
 					{
-						retrievedData d = ringBufReadRetrievedData(retrievingBuffer);
+						retrievedData d = ringBufReadRetrievedData(retrievingBuffer,cs);
 						if (d.processId == processId)
 						{
-							d = ringBufGetRetrievedData(retrievingBuffer);
+							d = ringBufGetRetrievedData(retrievingBuffer,cs);
 							iResult = send(clientSocket, (char*)&d.data, BUFFER_SIZE, 0);
 							if (iResult == SOCKET_ERROR)
 							{
@@ -308,9 +300,9 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				}
 				else {
 					printf("\nData: %s  ProcessId: %d\n", newMessage.text, newMessage.processId);
-					ringBufPutMessage(storingBuffer, newMessage);
+					ringBufPutMessage(storingBuffer, newMessage,cs);
 					printf("Pristigli podatak od procesa je smesten u buffer za slanje.\n");
-					printBuffer(*storingBuffer);
+					printBuffer(*storingBuffer,cs);
 				}
 			}
 			else if (iResult == 0)
