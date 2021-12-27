@@ -12,7 +12,7 @@ char* Menu() {
 		switch (option) {
 			case '1':
 				printf("Unesite poruku: ");
-				scanf("%s", message,2);
+				scanf("%s", message,2); ////OVO OVDE JE KOD SASE TACKA 3 SA GRESKOM ALI JA SE SECAM DA OVAJ SCANF NIJE RADIO DOK NISI STAVIO TU DVOJKU
 				return message;
 			case '2':
 				strcpy(message, "get_data_from_replica");
@@ -73,7 +73,7 @@ void RegisterService() {
 	}
 	short serviceId;
 	printf("Unesite id procesa: ");
-	scanf_s("%d", &serviceId);
+	scanf_s("%h", &serviceId); // h stands for half (short)!!!!!!!!!!!!!!!!!!!!!!
 	serviceId =htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
 	//getchar();    //pokupiti enter karakter iz bafera tastature
 	// Slanje pripremljene poruke zapisane unutar strukture studentInfo

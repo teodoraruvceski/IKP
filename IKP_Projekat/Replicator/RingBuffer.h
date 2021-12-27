@@ -17,20 +17,22 @@ struct retrievedData {
 struct RingBufferRetrieved {
 	unsigned int tail;
 	unsigned int head;
+	int count;
 	struct retrievedData data[RING_SIZE];
 };
 struct RingBuffer {
 	unsigned int tail;
 	unsigned int head;
+	int count;
 	struct message data[RING_SIZE];
 };
 // Operacije za rad sa kruznim baferom 
-struct message ringBufGetMessage(RingBuffer* apBuffer, CRITICAL_SECTION* cs);
-void ringBufPutMessage(RingBuffer* apBuffer, struct message m, CRITICAL_SECTION* cs);
-void printBuffer(RingBuffer apBuffer, CRITICAL_SECTION* cs);
-struct message ringBufReadMessage(RingBuffer* apBuffer, CRITICAL_SECTION* cs);
+struct message ringBufGetMessage(RingBuffer* apBuffer);
+bool ringBufPutMessage(RingBuffer* apBuffer, struct message m);
+void printBuffer(RingBuffer *apBuffer);
+struct message ringBufReadMessage(RingBuffer* apBuffer);
 
-struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* apBuffer, CRITICAL_SECTION* cs);
-void ringBufPutRetrievedData(RingBufferRetrieved* apBuffer, struct retrievedData d, CRITICAL_SECTION* cs);
-void printBufferRetrievedData(RingBufferRetrieved apBuffer, CRITICAL_SECTION* cs);
-struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* apBuffer, CRITICAL_SECTION* cs);
+struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* apBuffer);
+bool ringBufPutRetrievedData(RingBufferRetrieved* apBuffer, struct retrievedData d);
+void printBufferRetrievedData(RingBufferRetrieved *apBuffer);
+struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* apBuffer);

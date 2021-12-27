@@ -1,13 +1,14 @@
 #include "ReplicatorPrimHeader.h"
 
-
+SOCKET connectSocket[NUMOF_THREADS_SENDING];
+SOCKET serverSocket_recv[NUMOF_THREADS_RECV];
 void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs) {
 	// Socket used to communicate with server
-	DWORD ConncectWithReplicator2ThreadID[NUMOF_THREADS];
-	HANDLE hConncectWithReplicator2Thread[NUMOF_THREADS];
+	DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING];
+	HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING];
 
-	SOCKET connectSocket[NUMOF_THREADS];
-	for (int i = 0;i < NUMOF_THREADS;i++) {
+	
+	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
 	}
 	int numOfConnected = 0;
@@ -24,7 +25,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 		return;
 	}
 	// create a socket
-	for (int i = 0;i < NUMOF_THREADS;i++) {
+	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = socket(AF_INET,
 			SOCK_STREAM,
 			IPPROTO_TCP);
@@ -53,14 +54,202 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 		threadArgs.storingBuffer = storingBuffer;
 		threadArgs.retrievingBuffer = retrievingBuffer;
 		threadArgs.cs = cs;
-		hConncectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &ConncectWithReplicator2Thread, &threadArgs, 0, &ConncectWithReplicator2ThreadID[numOfConnected]);
+		hConnectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator2Thread, &threadArgs, 0, &ConnectWithReplicator2ThreadID[numOfConnected]);
 		
 		numOfConnected++;
 	}
+	///////////////////////////////////////////////////////////////////////////////////
+
+	DWORD ListenForRecvRep2ThreadID[NUMOF_THREADS_RECV];
+	HANDLE hListenForRecvRep2Thread[NUMOF_THREADS_RECV];
+	ThreadArgs threadArgs[NUMOF_THREADS_RECV];
+
+	int threadNum = 0;
+	//hListenForRegistrationsThread = CreateThread(NULL, 0, &ListenForRegistrationsThread, &listenSocket, 0, &ListenForRegistrationsThreadID);
+
+	// Socket used for listening for new clients 
+	SOCKET listenSocket = INVALID_SOCKET;
+
+	// Sockets used for communication with client
+	SOCKET clientSockets[NUMOF_THREADS_RECV];
+	short lastIndex = 0;
+
+	// Variable used to store function return value
+    iResult;
+
+	// Buffer used for storing incoming data
+	dataBuffer[BUFFER_SIZE];
+
+	// Initialize windows sockets library for this process
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
+		//return 1;
+		return;
+	}
+
+	// Initialize serverAddress structure used by bind
+	sockaddr_in serverAddress;
+	memset((char*)&serverAddress, 0, sizeof(serverAddress));
+	serverAddress.sin_family = AF_INET;				// IPv4 address family
+	serverAddress.sin_addr.s_addr = INADDR_ANY;		// Use all available addresses
+	serverAddress.sin_port = htons(SERVER_PORT2_2);	// Use specific port
+
+	//initialise all client_socket[] to 0 so not checked
+	memset(clientSockets, 0, NUMOF_THREADS_RECV * sizeof(SOCKET));
+
+	// Create a SOCKET for connecting to server
+	listenSocket = socket(AF_INET,      // IPv4 address family
+		SOCK_STREAM,  // Stream socket
+		IPPROTO_TCP); // TCP protocol
+
+	// Check if socket is successfully created
+	if (listenSocket == INVALID_SOCKET)
+	{
+		printf("socket failed with error: %ld\n", WSAGetLastError());
+		WSACleanup();
+		//return 1;
+		return;
+	}
+
+	// Setup the TCP listening socket - bind port number and local address to socket
+	iResult = bind(listenSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
+
+	// Check if socket is successfully binded to address and port from sockaddr_in structure
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("bind failed with error: %d\n", WSAGetLastError());
+		closesocket(listenSocket);
+		WSACleanup();
+		//return 1;
+		return;
+	}
+
+	//// All connections are by default accepted by protocol stek if socket is in listening mode.
+	//// With SO_CONDITIONAL_ACCEPT parameter set to true, connections will not be accepted by default
+	bool bOptVal = true;
+	int bOptLen = sizeof(bool);
+	iResult = setsockopt(listenSocket, SOL_SOCKET, SO_CONDITIONAL_ACCEPT, (char*)&bOptVal, bOptLen);
+	if (iResult == SOCKET_ERROR) {
+		printf("setsockopt for SO_CONDITIONAL_ACCEPT failed with error: %u\n", WSAGetLastError());
+	}
+
+	unsigned long  mode = 1;
+	if (ioctlsocket(listenSocket, FIONBIO, &mode) != 0)
+		printf("ioctlsocket failed with error.");
+
+	// Set listenSocket in listening mode
+	iResult = listen(listenSocket, SOMAXCONN);
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("listen failed with error: %d\n", WSAGetLastError());
+		closesocket(listenSocket);
+		WSACleanup();
+		//return 1;
+		return;
+	}
+
+	printf("Server socket is set to listening mode. Waiting for new connection requests.\n");
+
+	// set of socket descriptors
+	fd_set readfds;
+
+	// timeout for select function
+	timeval timeVal;
+	timeVal.tv_sec = 1;
+	timeVal.tv_usec = 0;
+	//char* message;
+	//struct process newProcess;
+	while (true)
+	{
+		if (lastIndex + 1 == NUMOF_THREADS_RECV)
+			break;
+		// initialize socket set
+		FD_ZERO(&readfds);
+
+		// add server's socket and clients' sockets to set
+		if (lastIndex != NUMOF_THREADS_RECV)
+		{
+			FD_SET(listenSocket, &readfds);
+		}
+
+		for (int i = 0; i < lastIndex; i++)
+		{
+			FD_SET(clientSockets[i], &readfds);
+		}
+
+		// wait for events on set
+		int selectResult = select(0, &readfds, NULL, NULL, &timeVal);
+
+		if (selectResult == SOCKET_ERROR)
+		{
+			printf("Select failed with error: %d\n", WSAGetLastError());
+			closesocket(listenSocket);
+			WSACleanup();
+			//return 0;
+			return;
+		}
+		else if (selectResult == 0) // timeout expired
+		{
+			if (_kbhit()) //check if some key is pressed
+			{
+				getch();
+				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
+			}
+			continue;
+		}
+		else if (FD_ISSET(listenSocket, &readfds))
+		{
+			// Struct for information about connected client
+			sockaddr_in clientAddr;
+			int clientAddrSize = sizeof(struct sockaddr_in);
+
+			// New connection request is received. Add new socket in array on first free position.
+			clientSockets[lastIndex] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+
+			if (clientSockets[lastIndex] == INVALID_SOCKET)
+			{
+				if (WSAGetLastError() == WSAECONNRESET)
+				{
+					printf("accept failed, because timeout for client request has expired.\n");
+				}
+				else
+				{
+					printf("accept failed with error: %d\n", WSAGetLastError());
+				}
+			}
+			else
+			{
+
+				if (ioctlsocket(clientSockets[lastIndex], FIONBIO, &mode) != 0)
+				{
+					printf("ioctlsocket failed with error.");
+					continue;
+				}
+				threadArgs[lastIndex].clientAddr = clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
+				threadArgs[lastIndex].clientSocket = &clientSockets[lastIndex];
+				threadArgs[lastIndex].storingBuffer = storingBuffer;
+				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
+				threadArgs[lastIndex].cs = cs;
+				//char args[8];
+
+				hListenForRecvRep2Thread[threadNum] = CreateThread(NULL, 0, &ReccvFromReplicator2Thread, &threadArgs[lastIndex], 0, &ListenForRecvRep2ThreadID[threadNum]);
+				threadNum++;
+				lastIndex++;
+			}
+		}
+	}
+	//for (int i = 0;i < threadNum;i++)
+	//	CloseHandle(hListenForRecvRep2Thread[i]);
+	////Close listen and accepted sockets
+	//closesocket(listenSocket);
+
+	// Deinitialize WSA library
+	//WSACleanup();
 }
 
 
-DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
+DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
 	printf("Nit konektovana na replicator2.\n");
@@ -73,11 +262,13 @@ DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		m = ringBufGetMessage(storingBuffer, cs);
-		printf("Cheking for messages to send...\n");
-		Sleep(10000);
+		m = ringBufGetMessage(storingBuffer);
 		if (m.processId == -1)
+		{
+			Sleep(3000);
 			continue;
+		}
+		printf("Cheking for messages to send...\n");
 		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
 		// Check result of send function
 		if (iResult == SOCKET_ERROR)
@@ -87,23 +278,7 @@ DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
 			WSACleanup();
 			break;
 		}
-		if (strcmp(m.text, "get_data_from_replica") == 0)
-		{
-			
-			printf("Sent request for retrieving data. Process waiting for response from replicator2.");
-			iResult = recv(connectSocket, dataBuffer, BUFFER_SIZE, 0);
-			dataBuffer[iResult] = '\0';
-			printf("Process received from server: ");
-			retrievedData response = *(retrievedData*)dataBuffer;
-			//printf("OVDJE ISPISATI PODATKE KOJE JE VRATIO REPLICATOR");//ne znam kako **char da ispisem :)))
-			ringBufPutRetrievedData(retrievingBuffer, response,cs);
-			printBufferRetrievedData(*retrievingBuffer,cs);
-			
-		}
-		else
-		{
-			printf("Sent data to replicator2.");
-		}
+		printf("Sent data to replicator2.");
 	}
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);
@@ -121,69 +296,47 @@ DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
 	// Deinitialize WSA library
 	WSACleanup();
 
+}
+DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
+	int iResult;
+	retrievedData m;
+	printf("Nit konektovana na replicator2.\n");
+	SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
+	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	Sleep(3000);
+	char* message;
+	while (1)
+	{
+		char dataBuffer[BUFFER_SIZE];
+		int iResult;
+		
+		
+		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+		if (iResult > 0)
+		{
+			dataBuffer[iResult] = '\0';
+			m = *(retrievedData*)(dataBuffer);
+			printf("Message received from client.\n");
+			ringBufPutRetrievedData(retrievingBuffer,m);
+		}
+		else if (iResult == 0)
+		{
+			// connection was closed gracefully
+			printf("Connection with client closed.\n");
+			//closesocket(clientSocket);
+		}
+		else
+		{
+			//there was an error during recv
+			//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+			//closesocket(clientSocket);
+		}
+		//Close listen and accepted sockets
+		//closesocket(listenSocket);
+	}
+	// Deinitialize WSA library
+	WSACleanup();
 
-	//int iResult;
-	//short serviceId;
-	//printf("Unesite id procesa: ");
-	//scanf_s("%d", &serviceId);
-	//serviceId = (short)htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
-	////getchar();    //pokupiti enter karakter iz bafera tastature
-	//// Slanje pripremljene poruke zapisane unutar strukture studentInfo
-	////prosledjujemo adresu promenljive student u memoriji, jer se na toj adresi nalaze podaci koje saljemo
-	////kao i velicinu te strukture (jer je to duzina poruke u bajtima)
-	//iResult = send(connectSocket, (char*)&serviceId, (short)sizeof(short), 0);
-	//// Check result of send function
-	//if (iResult == SOCKET_ERROR)
-	//{
-	//	printf("send failed with error: %d\n", WSAGetLastError());
-	//	closesocket(connectSocket);
-	//	WSACleanup();
-	//	return;
-	//}
-	//printf("Registration message with ID successfully sent. Total bytes: %ld\n", iResult);
-	//while (true)
-	//{
-	//	int option;
-	//	struct message messageForRepl;
-
-	//	//char message[MESSAGE_LEN];
-	//	strcpy(messageForRepl.text, Menu());//Dobavljanje komande koju saljemo replicator1
-	//	messageForRepl.serviceId = serviceId;
-	//	//messageForRepl.serviceId = htons(messageForRepl.serviceId); vec je gore uradjen htons nad serviceId
-
-	//	//printf("ID... id %d", messageForRepl.serviceId);
-	//	if (strcmp(messageForRepl.text, "get_data_from_replica") == 0) {
-	//		iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(messageForRepl), 0);
-	//		// Check result of send function
-	//		if (iResult == SOCKET_ERROR)
-	//		{
-	//			printf("send failed with error: %d\n", WSAGetLastError());
-	//			closesocket(connectSocket);
-	//			WSACleanup();
-	//			return;
-	//		}
-	//		printf("Process waititng respons from replicator.");
-	//		iResult = recv(connectSocket, dataBuffer, BUFFER_SIZE, 0);
-	//		dataBuffer[iResult] = '\0';
-	//		printf("Process received from server: ");
-	//		char* message = dataBuffer;
-	//		printf("OVDJE ISPISATI PODATKE KOJE JE VRATIO REPLICATOR");
-	//	}
-	//	else if (strcmp(messageForRepl.text, "turn_off") == 0) {
-	//		break;
-	//	}
-	//	else {
-	//		iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(struct message), 0);
-	//		// Check result of send function
-	//		if (iResult == SOCKET_ERROR)
-	//		{
-	//			printf("send failed with error: %d\n", WSAGetLastError());
-	//			closesocket(connectSocket);
-	//			WSACleanup();
-	//			return;
-	//		}
-	//		printf("Message %s sucssesfuly sent to replicator. ID = %d", messageForRepl.text, messageForRepl.serviceId);
-	//	}
-	//}
-	
 }

@@ -1,7 +1,9 @@
 #include "ReplicatorSecHeader.h"
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
-void ListenForReplicator1Registrations()
+SOCKET connectSocket[NUMOF_THREADS_SENDING];
+
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer)
 {
 	clientConnection clientConnections[NUMOF_THREADS];
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
@@ -171,6 +173,61 @@ void ListenForReplicator1Registrations()
 			}
 		}
 	}
+	/// ////////////////////////////////////////////////////////////////////////////////////////
+	DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING];
+	HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING];
+
+
+	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
+		connectSocket[i] = INVALID_SOCKET;
+	}
+	int numOfConnected = 0;
+	// Variable used to store function return value
+	int iResult;
+	// Buffer we will use to store message
+	char dataBuffer[BUFFER_SIZE];
+	// WSADATA data structure that is to receive details of the Windows Sockets implementation
+	WSADATA wsaData;
+	// Initialize windows sockets library for this process
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
+		return;
+	}
+	// create a socket
+	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
+		connectSocket[i] = socket(AF_INET,
+			SOCK_STREAM,
+			IPPROTO_TCP);
+		if (connectSocket[i] == INVALID_SOCKET)
+		{
+			printf("socket %d failed with error: %ld\n", i, WSAGetLastError());
+			WSACleanup();
+			return;
+		}
+		// Create and initialize address structure
+		sockaddr_in serverAddress;
+		serverAddress.sin_family = AF_INET;								// IPv4 protocol
+		serverAddress.sin_addr.s_addr = inet_addr(SERVER_IP_ADDRESS);	// ip address of server
+		serverAddress.sin_port = htons(SERVER_PORT_REP1);					// server port
+		// Connect to server specified in serverAddress and socket connectSocket
+		iResult = connect(connectSocket[i], (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("Socket %d unable to connect to server.\n", i);
+			closesocket(connectSocket[i]);
+			WSACleanup();
+			return;
+		}
+		ThreadArgs threadArgs;
+		threadArgs.clientSocket = &connectSocket[numOfConnected];
+		threadArgs.storingBuffer = storingBuffer;
+		threadArgs.retrievingBuffer = retrievingBuffer;
+		threadArgs.cs = &cs;
+		hSendToReplicator1Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator1Thread, &threadArgs, 0, &SendToReplicator1ThreadID[numOfConnected]);
+
+		numOfConnected++;
+	}
 	for (int i = 0;i < threadNum;i++)
 		CloseHandle(hListenForReplicator1Thread[i]);
 	//Close listen and accepted sockets
@@ -282,6 +339,55 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 
 
 	}
+	// Deinitialize WSA library
+	WSACleanup();
+
+}
+//fja u kojoj je rep2 klijent
+DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
+	int iResult;
+	message m;
+	printf("Nit konektovana na replicator2.\n");
+	SOCKET connectSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
+	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	Sleep(3000);
+
+	while (1)
+	{
+		char dataBuffer[BUFFER_SIZE];
+		m = ringBufGetMessage(storingBuffer);
+		if (m.processId == -1)
+		{
+			Sleep(3000);
+			continue;
+		}
+		printf("Cheking for messages to send...\n");
+		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
+		// Check result of send function
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(connectSocket);
+			WSACleanup();
+			break;
+		}
+		printf("Sent data to replicator2.");
+	}
+	// Shutdown the connection since we're done
+	iResult = shutdown(connectSocket, SD_BOTH);
+	// Check if connection is succesfully shut down.
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("Shutdown failed with error: %d\n", WSAGetLastError());
+		closesocket(connectSocket);
+		WSACleanup();
+		return -1;
+	}
+	Sleep(1000);
+	// Close connected socket
+	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
 

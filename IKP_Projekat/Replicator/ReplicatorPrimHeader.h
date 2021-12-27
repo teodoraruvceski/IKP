@@ -19,10 +19,12 @@
 #pragma pack(1)
 
 #define SERVER_IP_ADDRESS "127.0.0.1"
-#define SERVER_PORT 27016
-#define SERVER_PORT2 27017
+#define SERVER_PORT 27016 /// port replikatora1 na koj i se konektuju procesi
+#define SERVER_PORT2 27017   /// port replikatora2 naoji se konektuje replikator1
+#define SERVER_PORT2_2 27018/// port replikatora1 na koji se konektuju niti replikatora2 koje salju retrievedData
 #define MAX_CLIENTS 10
-#define NUMOF_THREADS 3
+#define NUMOF_THREADS_SENDING 3
+#define NUMOF_THREADS_RECV 3
 
 //globalna promenljiva buffera
  //RingBuffer* storingBuffer;
@@ -31,7 +33,7 @@ struct port {
     int val;
     bool ind;
 };
-
+static CRITICAL_SECTION cs;
 
 static struct port ports[MAX_CLIENTS];
 
@@ -55,8 +57,8 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
 
 void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
-DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams);
-
+DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams);
+DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams);
 bool RegisterService(struct process);
 
 void SendData(int serviceId, void* data, int dataSize);

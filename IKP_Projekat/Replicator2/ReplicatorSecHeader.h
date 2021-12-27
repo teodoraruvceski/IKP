@@ -12,17 +12,19 @@
 
 #include <iostream> 
 #include "RingBuffer.h"
+
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 #pragma warning(disable:4996) 
 #pragma pack(1)
 
-
+#define SERVER_IP_ADDRESS "127.0.0.1"
 #define SERVER_PORT 27017
+#define SERVER_PORT_REP1 27018
 #define MAX_CLIENTS 10
 #define NUMOF_THREADS 3
-
+#define NUMOF_THREADS_SENDING 3
 struct port {
     int val;
     bool ind;
@@ -30,7 +32,15 @@ struct port {
 
 
 static struct port ports[MAX_CLIENTS];
+static CRITICAL_SECTION cs;
 
+struct ThreadArgs {
+    SOCKET* clientSocket;
+    sockaddr_in clientAddr;
+    RingBuffer* storingBuffer;
+    RingBufferRetrieved* retrievingBuffer;
+    CRITICAL_SECTION* cs;
+};
 
 struct process {
     char ipAddr[15];

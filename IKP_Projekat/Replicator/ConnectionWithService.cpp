@@ -232,6 +232,10 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				processId = *((short*)(message_));
 				processId = ntohs(processId);
 				newProcess.id = processId;
+				newMessage.processId = newProcess.id;
+				strcpy(newMessage.text, "REGISTRATION");
+				ringBufPutMessage(storingBuffer, newMessage);//dodavanje nove poruke
+
 				printf("Registration message %d \n", newProcess.id);
 				flag = true;
 				printf("_______________________________  \n");
@@ -274,14 +278,14 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 
 					
 					printf("Process with id %d requested retrieving data.\n", processId);
-					ringBufPutMessage(storingBuffer, newMessage,cs);
-					printBuffer(*storingBuffer,cs);
+					ringBufPutMessage(storingBuffer, newMessage);
+					printBuffer(storingBuffer);
 					while (1)
 					{
-						retrievedData d = ringBufReadRetrievedData(retrievingBuffer,cs);
+						retrievedData d = ringBufReadRetrievedData(retrievingBuffer);
 						if (d.processId == processId)
 						{
-							d = ringBufGetRetrievedData(retrievingBuffer,cs);
+							d = ringBufGetRetrievedData(retrievingBuffer);
 							iResult = send(clientSocket, (char*)&d.data, BUFFER_SIZE, 0);
 							if (iResult == SOCKET_ERROR)
 							{
@@ -300,9 +304,9 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				}
 				else {
 					printf("\nData: %s  ProcessId: %d\n", newMessage.text, newMessage.processId);
-					ringBufPutMessage(storingBuffer, newMessage,cs);
+					ringBufPutMessage(storingBuffer, newMessage);
 					printf("Pristigli podatak od procesa je smesten u buffer za slanje.\n");
-					printBuffer(*storingBuffer,cs);
+					printBuffer(storingBuffer);
 				}
 			}
 			else if (iResult == 0)
