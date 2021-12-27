@@ -49,7 +49,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 			return;
 		}
 		ThreadArgs threadArgs;
-		threadArgs.clientSocket = connectSocket[numOfConnected];
+		threadArgs.clientSocket = &connectSocket[numOfConnected];
 		threadArgs.storingBuffer = storingBuffer;
 		threadArgs.retrievingBuffer = retrievingBuffer;
 		threadArgs.cs = cs;
@@ -64,7 +64,7 @@ DWORD WINAPI ConncectWithReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
 	printf("Nit konektovana na replicator2.\n");
-	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	SOCKET connectSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;

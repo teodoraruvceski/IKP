@@ -172,7 +172,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 					continue;
 				}
 				threadArgs[lastIndex].clientAddr= clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
-				threadArgs[lastIndex].clientSocket = clientSockets[lastIndex];
+				threadArgs[lastIndex].clientSocket = &clientSockets[lastIndex];
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
@@ -200,7 +200,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	//SOCKET clientSocket = (*(clientConnection*)lpParams).clientSocket;
 	//sockaddr_in clientAddr = (*(clientConnection*)(lpParams)).clientAddr;
 	//RingBuffer* storingBuffer = (RingBuffer*)((char*)lpParams + 4);
-	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
 	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;

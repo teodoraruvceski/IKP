@@ -43,7 +43,7 @@ struct process {
 };
 
 struct ThreadArgs{
-    SOCKET clientSocket;
+    SOCKET* clientSocket;
     sockaddr_in clientAddr;
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
