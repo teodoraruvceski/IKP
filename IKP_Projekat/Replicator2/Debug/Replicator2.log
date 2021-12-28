@@ -1,7 +1,1 @@
-﻿  ConncetionWithReplicator1.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(21,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(192,10): warning C4101: 'wsaData2': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(250,8): warning C4101: 'message': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(361,8): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(396): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
-  Replicator2.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator2.exe
+﻿  Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator2.exe

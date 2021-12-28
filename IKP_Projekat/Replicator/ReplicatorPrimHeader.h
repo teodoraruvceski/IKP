@@ -27,8 +27,8 @@
 #define NUMOF_THREADS_RECV 3
 
 //globalna promenljiva buffera
- //RingBuffer* storingBuffer;
-
+ RingBuffer* storingBuffer;
+ RingBufferRetrieved* retrievingBuffer;
 struct port {
     int val;
     bool ind;
@@ -45,7 +45,7 @@ struct process {
 };
 
 struct ThreadArgs{
-    SOCKET* clientSocket;
+    int clientSocket;
     sockaddr_in clientAddr;
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
@@ -53,10 +53,10 @@ struct ThreadArgs{
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
+void ListenForRegistrations();
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
 
-void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
+void ConncectWithReplicator2();
 DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams);
 DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams);
 bool RegisterService(struct process);

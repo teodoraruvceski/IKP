@@ -1,7 +1,8 @@
 #include "ReplicatorPrimHeader.h"
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
-void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
+SOCKET clientSocketsProcess[MAX_CLIENTS];
+void ListenForRegistrations()
 {
 	
 	DWORD ListenForRegistrationsThreadID[MAX_CLIENTS];
@@ -15,7 +16,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 	SOCKET listenSocket = INVALID_SOCKET;
 
 	// Sockets used for communication with client
-	SOCKET clientSockets[MAX_CLIENTS];
+	
 	short lastIndex = 0;
 
 	// Variable used to store function return value
@@ -43,7 +44,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 	serverAddress.sin_port = htons(SERVER_PORT);	// Use specific port
 
 	//initialise all client_socket[] to 0 so not checked
-	memset(clientSockets, 0, MAX_CLIENTS * sizeof(SOCKET));
+	memset(clientSocketsProcess, 0, MAX_CLIENTS * sizeof(SOCKET));
 
 	// Create a SOCKET for connecting to server
 	listenSocket = socket(AF_INET,      // IPv4 address family
@@ -120,7 +121,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 
 		for (int i = 0; i < lastIndex; i++)
 		{
-			FD_SET(clientSockets[i], &readfds);
+			FD_SET(clientSocketsProcess[i], &readfds);
 		}
 
 		// wait for events on set
@@ -150,9 +151,9 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 			int clientAddrSize = sizeof(struct sockaddr_in);
 
 			// New connection request is received. Add new socket in array on first free position.
-			clientSockets[lastIndex] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+			clientSocketsProcess[lastIndex] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
 
-			if (clientSockets[lastIndex] == INVALID_SOCKET)
+			if (clientSocketsProcess[lastIndex] == INVALID_SOCKET)
 			{
 				if (WSAGetLastError() == WSAECONNRESET)
 				{
@@ -166,16 +167,16 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 			else
 			{
 
-				if (ioctlsocket(clientSockets[lastIndex], FIONBIO, &mode) != 0)
+				if (ioctlsocket(clientSocketsProcess[lastIndex], FIONBIO, &mode) != 0)
 				{
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
 				threadArgs[lastIndex].clientAddr= clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
-				threadArgs[lastIndex].clientSocket = &clientSockets[lastIndex];
+				threadArgs[lastIndex].clientSocket = lastIndex;
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
-				threadArgs[lastIndex].cs = cs;
+				threadArgs[lastIndex].cs = &cs;
 				char args[8];
 				//memset(args, (int)&cc, 4);
 				//memset(args+4, (int)storingBuffer, 4);
@@ -200,11 +201,12 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	//SOCKET clientSocket = (*(clientConnection*)lpParams).clientSocket;
 	//sockaddr_in clientAddr = (*(clientConnection*)(lpParams)).clientAddr;
 	//RingBuffer* storingBuffer = (RingBuffer*)((char*)lpParams + 4);
-	SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
+	//SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
+	int socket= (*(ThreadArgs*)(lpParams)).clientSocket;
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
-	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
-	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
-	CRITICAL_SECTION* cs= (*(ThreadArgs*)(lpParams)).cs;
+	//RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
+	//RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	//CRITICAL_SECTION* cs= (*(ThreadArgs*)(lpParams)).cs;
 	// Sockets used for communication with client
 
 	bool flag = false;
@@ -223,7 +225,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 		int iResult;
 		if (flag==false)
 		{
-			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+			iResult = recv(clientSocketsProcess[socket], dataBuffer, BUFFER_SIZE, 0);
 			if (iResult > 0)
 			{
 				dataBuffer[iResult] = '\0';
@@ -243,7 +245,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				if (iResult == SOCKET_ERROR)
 				{
 					printf("send failed with error: %d\n", WSAGetLastError());
-					closesocket(clientSocket);
+					closesocket(clientSocketsProcess[socket]);
 					WSACleanup();
 					return 0;
 					//return;
@@ -254,7 +256,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 			{
 				// connection was closed gracefully
 				printf("Connection with client closed.\n");
-				closesocket(clientSocket);
+				closesocket(clientSocketsProcess[socket]);
 			}
 			else
 			{
@@ -265,7 +267,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 		}
 		else
 		{
-			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+			iResult = recv(clientSocketsProcess[socket], dataBuffer, BUFFER_SIZE, 0);
 			if (iResult > 0)
 			{
 				dataBuffer[iResult] = '\0';
@@ -286,11 +288,11 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 						if (d.processId == processId)
 						{
 							d = ringBufGetRetrievedData(retrievingBuffer);
-							iResult = send(clientSocket, (char*)&d.data, BUFFER_SIZE, 0);
+							iResult = send(clientSocketsProcess[socket], (char*)&d.data, BUFFER_SIZE, 0);
 							if (iResult == SOCKET_ERROR)
 							{
 								printf("send failed with error: %d\n", WSAGetLastError());
-								closesocket(clientSocket);
+								closesocket(clientSocketsProcess[socket]);
 								WSACleanup();
 								return 0;
 								//return;
@@ -313,7 +315,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 			{
 				// connection was closed gracefully
 				printf("Connection with client closed.\n");
-				closesocket(clientSocket);
+				closesocket(clientSocketsProcess[socket]);
 			}
 			else
 			{

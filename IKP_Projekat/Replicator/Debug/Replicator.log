@@ -1,7 +1,11 @@
-﻿  ConncetionWithReplicator2.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(266,8): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(304,6): warning C4101: 'iResult': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(311,8): warning C4101: 'message': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(302): warning C4715: 'SendToReplicator2Thread': not all control paths return a value
-  Replicator.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator.exe
+﻿ConnectionWithService.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+ConnectionWithService.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
+main.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+main.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
+Map.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+Map.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
+ReplicatorFunctions.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+ReplicatorFunctions.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
+RingBuffer.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+RingBuffer.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe : fatal error LNK1169: one or more multiply defined symbols found
