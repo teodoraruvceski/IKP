@@ -2,7 +2,8 @@
 
 char* Menu() {
 	char option;
-	char message[MESSAGE_LEN];
+	//char message[MESSAGE_LEN];
+	char* message = (char*)malloc(MESSAGE_LEN);
 	while (true) {	
 		printf("Odaberite opciju:\n");
 		printf("1. Posalji podatke.\n");
@@ -12,10 +13,11 @@ char* Menu() {
 		switch (option) {
 			case '1':
 				printf("Unesite poruku: ");
-				scanf("%s", message,2); ////OVO OVDE JE KOD SASE TACKA 3 SA GRESKOM ALI JA SE SECAM DA OVAJ SCANF NIJE RADIO DOK NISI STAVIO TU DVOJKU
+				scanf("%s", message); ////OVO OVDE JE KOD SASE TACKA 3 SA GRESKOM ALI JA SE SECAM DA OVAJ SCANF NIJE RADIO DOK NISI STAVIO TU DVOJKU
 				return message;
 			case '2':
-				strcpy(message, "get_data_from_replica");
+				//strcpy(message, "get_data_from_replica");
+				memcpy(message, "get_data_from_replica", strlen("get_data_from_replica"));
 				return message;
 			case '3':
 				strcpy(message, "turn_off");

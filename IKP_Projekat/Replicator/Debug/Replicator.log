@@ -1,4 +1,23 @@
-﻿ConnectionWithService.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
+﻿  ConncetionWithReplicator2.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(267,8): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(305,6): warning C4101: 'iResult': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(313,8): warning C4101: 'message': unreferenced local variable
+  ConnectionWithService.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConnectionWithService.cpp(26,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConnectionWithService.cpp(180,10): warning C4101: 'args': unreferenced local variable
+  main.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\main.cpp(32,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\main.cpp(31,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
+  Map.cpp
+  ReplicatorFunctions.cpp
+  RingBuffer.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(56,32): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(105,32): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(303): warning C4715: 'SendToReplicator2Thread': not all control paths return a value
+  LINK : C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator.exe not found or not built by the last incremental link; performing full link
+ConnectionWithService.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
 ConnectionWithService.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
 main.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
 main.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
@@ -8,4 +27,4 @@ ReplicatorFunctions.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?s
 ReplicatorFunctions.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
 RingBuffer.obj : error LNK2005: "struct RingBuffer * storingBuffer" (?storingBuffer@@3PAURingBuffer@@A) already defined in ConncetionWithReplicator2.obj
 RingBuffer.obj : error LNK2005: "struct RingBufferRetrieved * retrievingBuffer" (?retrievingBuffer@@3PAURingBufferRetrieved@@A) already defined in ConncetionWithReplicator2.obj
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe : fatal error LNK1169: one or more multiply defined symbols found
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator.exe : fatal error LNK1169: one or more multiply defined symbols found
