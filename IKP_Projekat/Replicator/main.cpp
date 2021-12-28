@@ -8,7 +8,9 @@
 
 #include "ReplicatorPrimHeader.h"
 // TCP server that use non-blocking sockets
-
+extern RingBuffer* storingBuffer;
+extern RingBufferRetrieved* retrievingBuffer;
+extern CRITICAL_SECTION cs;
 int main()
 {
 

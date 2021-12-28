@@ -1,5 +1,10 @@
 #include "ReplicatorPrimHeader.h"
 
+//globalna promenljiva buffera
+RingBuffer* storingBuffer;
+RingBufferRetrieved* retrievingBuffer;
+static CRITICAL_SECTION cs;
+
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
 SOCKET clientSocketsProcess[MAX_CLIENTS];
 void ListenForRegistrations()

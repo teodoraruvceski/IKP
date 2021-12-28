@@ -26,14 +26,11 @@
 #define NUMOF_THREADS_SENDING 3
 #define NUMOF_THREADS_RECV 3
 
-//globalna promenljiva buffera
- RingBuffer* storingBuffer;
- RingBufferRetrieved* retrievingBuffer;
+
 struct port {
     int val;
     bool ind;
 };
-static CRITICAL_SECTION cs;
 
 static struct port ports[MAX_CLIENTS];
 

@@ -1,7 +1,11 @@
 #include "ReplicatorPrimHeader.h"
+extern RingBuffer* storingBuffer;
+extern RingBufferRetrieved* retrievingBuffer;
+extern CRITICAL_SECTION cs;
 
-struct message ringBufGetMessage(RingBuffer* apBuffer) {
+struct message ringBufGetMessage() {
 	message ret;
+	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(&cs);
 	if (apBuffer->count==0)
 	{
@@ -18,8 +22,9 @@ struct message ringBufGetMessage(RingBuffer* apBuffer) {
 	LeaveCriticalSection(&cs);
 	return ret;
 }
-struct message ringBufReadMessage(RingBuffer* apBuffer) {
+struct message ringBufReadMessage() {
 	message ret;
+	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(&cs);
 	if (apBuffer->count == 0)
 	{
@@ -33,7 +38,8 @@ struct message ringBufReadMessage(RingBuffer* apBuffer) {
 	LeaveCriticalSection(&cs);
 	return ret;
 }
-bool ringBufPutMessage(RingBuffer* apBuffer, struct message m) {
+bool ringBufPutMessage(struct message m) {
+	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(&cs);
 	bool ret;
 	if (apBuffer->count<BUFFER_SIZE)
@@ -51,7 +57,8 @@ bool ringBufPutMessage(RingBuffer* apBuffer, struct message m) {
 	return true;
 }
 
-void printBuffer(RingBuffer *apBuffer) {
+void printBuffer() {
+	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(&cs);
 	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
 		printf("Message: %s, ProcessId: %d.\n", apBuffer->data[i].text, apBuffer->data[i].processId);
@@ -60,9 +67,10 @@ void printBuffer(RingBuffer *apBuffer) {
 }
 
 
-struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* apBuffer)
+struct retrievedData ringBufGetRetrievedData()
 {
 	retrievedData ret;
+	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(&cs);
 	if (apBuffer->count==0)
 	{
@@ -80,9 +88,10 @@ struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* apBuffer)
 	return ret;
 	
 }
-bool ringBufPutRetrievedData(RingBufferRetrieved* apBuffer, struct retrievedData d)
+bool ringBufPutRetrievedData( struct retrievedData d)
 {
 	bool ret;
+	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(&cs);
 	if (apBuffer->count==BUFFER_SIZE)
 	{
@@ -99,8 +108,9 @@ bool ringBufPutRetrievedData(RingBufferRetrieved* apBuffer, struct retrievedData
 	LeaveCriticalSection(&cs);
 	return true;
 }
-void printBufferRetrievedData(RingBufferRetrieved* apBuffer)
+void printBufferRetrievedData()
 {
+	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(&cs);
 	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
 		printf("ProcessId: %d.\nData:\n", apBuffer->data[i].processId);
@@ -111,8 +121,9 @@ void printBufferRetrievedData(RingBufferRetrieved* apBuffer)
 	}
 	LeaveCriticalSection(&cs);
 }
-struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* apBuffer)
+struct retrievedData ringBufReadRetrievedData()
 {
+	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	retrievedData ret;
 	EnterCriticalSection(&cs);
 	int index = apBuffer->head;

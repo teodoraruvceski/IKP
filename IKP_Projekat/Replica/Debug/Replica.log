@@ -1,0 +1,9 @@
+﻿  ConnectionWithReplicator2.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\ConnectionWithReplicator2.cpp(7,8): warning C4101: 'ListenForRegistrationsThreadID': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\ConnectionWithReplicator2.cpp(25,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\ConnectionWithReplicator2.cpp(9,13): warning C4101: 'threadArgs': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\ConnectionWithReplicator2.cpp(8,9): warning C4101: 'hListenForRegistrationsThread': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\ConnectionWithReplicator2.cpp(102,9): warning C4101: 'readfds': unreferenced local variable
+  main.cpp
+  Generating Code...
+  Replica.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replica.exe

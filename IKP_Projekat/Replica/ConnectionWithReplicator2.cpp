@@ -107,92 +107,92 @@ void ListenForReplicator2() {
 	timeVal.tv_usec = 0;
 	//char* message;
 	//struct process newProcess;
-	while (true)
-	{
-		// initialize socket set
-		FD_ZERO(&readfds);
+	//while (true)
+	//{
+	//	// initialize socket set
+	//	FD_ZERO(&readfds);
 
-		// add server's socket and clients' sockets to set
-		if (lastIndex != MAX_CLIENTS)
-		{
-			FD_SET(listenSocket, &readfds);
-		}
+	//	// add server's socket and clients' sockets to set
+	//	if (lastIndex != MAX_CLIENTS)
+	//	{
+	//		FD_SET(listenSocket, &readfds);
+	//	}
 
-		for (int i = 0; i < lastIndex; i++)
-		{
-			FD_SET(clientSocketsProcess[i], &readfds);
-		}
+	//	for (int i = 0; i < lastIndex; i++)
+	//	{
+	//		FD_SET(clientSocketsProcess[i], &readfds);
+	//	}
 
-		// wait for events on set
-		int selectResult = select(0, &readfds, NULL, NULL, &timeVal);
+	//	// wait for events on set
+	//	int selectResult = select(0, &readfds, NULL, NULL, &timeVal);
 
-		if (selectResult == SOCKET_ERROR)
-		{
-			printf("Select failed with error: %d\n", WSAGetLastError());
-			closesocket(listenSocket);
-			WSACleanup();
-			//return 0;
-			return;
-		}
-		else if (selectResult == 0) // timeout expired
-		{
-			if (_kbhit()) //check if some key is pressed
-			{
-				getch();
-				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
-			}
-			continue;
-		}
-		else if (FD_ISSET(listenSocket, &readfds))
-		{
-			// Struct for information about connected client
-			sockaddr_in clientAddr;
-			int clientAddrSize = sizeof(struct sockaddr_in);
+	//	if (selectResult == SOCKET_ERROR)
+	//	{
+	//		printf("Select failed with error: %d\n", WSAGetLastError());
+	//		closesocket(listenSocket);
+	//		WSACleanup();
+	//		//return 0;
+	//		return;
+	//	}
+	//	else if (selectResult == 0) // timeout expired
+	//	{
+	//		if (_kbhit()) //check if some key is pressed
+	//		{
+	//			getch();
+	//			printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
+	//		}
+	//		continue;
+	//	}
+	//	else if (FD_ISSET(listenSocket, &readfds))
+	//	{
+	//		// Struct for information about connected client
+	//		sockaddr_in clientAddr;
+	//		int clientAddrSize = sizeof(struct sockaddr_in);
 
-			// New connection request is received. Add new socket in array on first free position.
-			clientSocketsProcess[lastIndex] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+	//		// New connection request is received. Add new socket in array on first free position.
+	//		clientSocketsProcess[lastIndex] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
 
-			if (clientSocketsProcess[lastIndex] == INVALID_SOCKET)
-			{
-				if (WSAGetLastError() == WSAECONNRESET)
-				{
-					printf("accept failed, because timeout for client request has expired.\n");
-				}
-				else
-				{
-					printf("accept failed with error: %d\n", WSAGetLastError());
-				}
-			}
-			else
-			{
+	//		if (clientSocketsProcess[lastIndex] == INVALID_SOCKET)
+	//		{
+	//			if (WSAGetLastError() == WSAECONNRESET)
+	//			{
+	//				printf("accept failed, because timeout for client request has expired.\n");
+	//			}
+	//			else
+	//			{
+	//				printf("accept failed with error: %d\n", WSAGetLastError());
+	//			}
+	//		}
+	//		else
+	//		{
 
-				if (ioctlsocket(clientSocketsProcess[lastIndex], FIONBIO, &mode) != 0)
-				{
-					printf("ioctlsocket failed with error.");
-					continue;
-				}
-				threadArgs.clientAddr = clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
-				threadArgs.clientSocket = lastIndex;
-				//threadArgs.storingBuffer = storingBuffer;
-				//threadArgs.retrievingBuffer = retrievingBuffer;
-				threadArgs.cs = &cs;
-				char args[8];
-				//memset(args, (int)&cc, 4);
-				//memset(args+4, (int)storingBuffer, 4);
+	//			if (ioctlsocket(clientSocketsProcess[lastIndex], FIONBIO, &mode) != 0)
+	//			{
+	//				printf("ioctlsocket failed with error.");
+	//				continue;
+	//			}
+	//			threadArgs.clientAddr = clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
+	//			threadArgs.clientSocket = lastIndex;
+	//			//threadArgs.storingBuffer = storingBuffer;
+	//			//threadArgs.retrievingBuffer = retrievingBuffer;
+	//			threadArgs.cs = &cs;
+	//			char args[8];
+	//			//memset(args, (int)&cc, 4);
+	//			//memset(args+4, (int)storingBuffer, 4);
 
-				hListenForRegistrationsThread[threadNum] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &threadArgs[lastIndex], 0, &ListenForRegistrationsThreadID[threadNum]);
-				threadNum++;
-				lastIndex++;
-			}
-		}
-	}
-	for (int i = 0;i < threadNum;i++)
-		CloseHandle(hListenForRegistrationsThread[i]);
-	//Close listen and accepted sockets
-	closesocket(listenSocket);
+	//			hListenForRegistrationsThread[threadNum] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &threadArgs[lastIndex], 0, &ListenForRegistrationsThreadID[threadNum]);
+	//			threadNum++;
+	//			lastIndex++;
+	//		}
+	//	}
+	//}
+	//for (int i = 0;i < threadNum;i++)
+	//	CloseHandle(hListenForRegistrationsThread[i]);
+	////Close listen and accepted sockets
+	//closesocket(listenSocket);
 
-	// Deinitialize WSA library
-	WSACleanup();
+	//// Deinitialize WSA library
+	//WSACleanup();
 }
 
 DWORD WINAPI ListenForReplicator2Thread(LPVOID lpParams) {

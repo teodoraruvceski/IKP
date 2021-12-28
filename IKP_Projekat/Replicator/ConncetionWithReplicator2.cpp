@@ -1,6 +1,12 @@
 #include "ReplicatorPrimHeader.h"
+
 SOCKET clientSockets[NUMOF_THREADS_RECV];
 SOCKET connectSocket[NUMOF_THREADS_SENDING];
+
+extern RingBuffer* storingBuffer;
+extern RingBufferRetrieved* retrievingBuffer;
+extern CRITICAL_SECTION cs;
+
 
 void ConncectWithReplicator2() {
 
