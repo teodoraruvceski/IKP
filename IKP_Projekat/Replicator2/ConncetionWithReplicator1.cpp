@@ -132,7 +132,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 		{
 			if (_kbhit()) //check if some key is pressed
 			{
-				getch();
+				_getch();
 				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
 			}
 			continue;
@@ -170,6 +170,8 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &clientConnections[threadNum], 0, &ListenForReplicator1ThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
+				if (threadNum == NUMOF_THREADS)
+					break;
 			}
 		}
 	}
@@ -177,17 +179,17 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 	DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING];
 
-
+	printf("Konektovanje na rep1 \n");
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
 	}
 	int numOfConnected = 0;
 	// Variable used to store function return value
-	int iResult;
+	iResult;
 	// Buffer we will use to store message
-	char dataBuffer[BUFFER_SIZE];
+	///////////////////////////////////////////////////////////////////////////////////char dataBuffer[BUFFER_SIZE];
 	// WSADATA data structure that is to receive details of the Windows Sockets implementation
-	WSADATA wsaData;
+	WSADATA wsaData2;
 	// Initialize windows sockets library for this process
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
@@ -353,7 +355,7 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	Sleep(3000);
-
+	_getch();
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];

@@ -1,17 +1,7 @@
 ﻿  ConncetionWithReplicator1.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.h(38,79): error C2014: preprocessor command must start as first nonwhite space
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(186,6): error C2086: 'int iResult': redefinition
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(19): message : see declaration of 'iResult'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(188,7): error C2086: 'char dataBuffer[4096]': redefinition
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(21): message : see declaration of 'dataBuffer'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(190,10): error C2086: 'WSADATA wsaData': redefinition
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(23): message : see declaration of 'wsaData'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(227,69): error C2065: 'SendToReplicator1Thread': undeclared identifier
-  main.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.h(38,79): error C2014: preprocessor command must start as first nonwhite space
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\main.cpp(15,2): error C2065: 'storingBuffer': undeclared identifier
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\main.cpp(16,2): error C2065: 'storingBuffer': undeclared identifier
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\main.cpp(17,2): error C2065: 'storingBuffer': undeclared identifier
-  RingBuffer.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(1,10): fatal error C1083: Cannot open include file: 'ReplicatorPrimHeader.h': No such file or directory
-  Generating Code...
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(21,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(192,10): warning C4101: 'wsaData2': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(250,8): warning C4101: 'message': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(361,8): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(396): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
+  Replicator2.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator2.exe

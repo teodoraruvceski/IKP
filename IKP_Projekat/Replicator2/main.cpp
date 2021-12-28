@@ -16,7 +16,7 @@ int main()
 	storingBuffer.tail = 0;
 	storingBuffer.count = 0;
 
-	ListenForReplicator1Registrations();
+	ListenForReplicator1Registrations(&storingBuffer,&retrievingBuffer);
 	_getch();
 	return 0;
 }

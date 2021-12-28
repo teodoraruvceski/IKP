@@ -54,8 +54,9 @@ struct clientConnection {
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForReplicator1Registrations();
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer);
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
+DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);
 
 bool RegisterService(struct process);
 

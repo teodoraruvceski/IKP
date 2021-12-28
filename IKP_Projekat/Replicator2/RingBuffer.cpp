@@ -1,4 +1,4 @@
-#include "ReplicatorPrimHeader.h"
+#include "ReplicatorSecHeader.h"
 
 struct message ringBufGetMessage(RingBuffer* apBuffer) {
 	message ret;

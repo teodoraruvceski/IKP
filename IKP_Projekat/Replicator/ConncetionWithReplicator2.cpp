@@ -1,8 +1,9 @@
 #include "ReplicatorPrimHeader.h"
-
+SOCKET clientSockets[NUMOF_THREADS_RECV];
 SOCKET connectSocket[NUMOF_THREADS_SENDING];
-SOCKET serverSocket_recv[NUMOF_THREADS_RECV];
+
 void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs) {
+
 	// Socket used to communicate with server
 	DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING];
@@ -59,7 +60,9 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 		numOfConnected++;
 	}
 	///////////////////////////////////////////////////////////////////////////////////
+	//SOCKET serverSocket_recv[NUMOF_THREADS_RECV];
 
+	//printf("Ocekivanje komenkcije...\n");
 	DWORD ListenForRecvRep2ThreadID[NUMOF_THREADS_RECV];
 	HANDLE hListenForRecvRep2Thread[NUMOF_THREADS_RECV];
 	ThreadArgs threadArgs[NUMOF_THREADS_RECV];
@@ -71,14 +74,13 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 	SOCKET listenSocket = INVALID_SOCKET;
 
 	// Sockets used for communication with client
-	SOCKET clientSockets[NUMOF_THREADS_RECV];
 	short lastIndex = 0;
 
 	// Variable used to store function return value
     iResult;
 
 	// Buffer used for storing incoming data
-	dataBuffer[BUFFER_SIZE];
+	//dataBuffer[BUFFER_SIZE];
 
 	// Initialize windows sockets library for this process
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -111,7 +113,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 		//return 1;
 		return;
 	}
-
+	//printf("\nBajnding...\n");
 	// Setup the TCP listening socket - bind port number and local address to socket
 	iResult = bind(listenSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
 
@@ -193,7 +195,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer,RingBufferRetrieved* retr
 		{
 			if (_kbhit()) //check if some key is pressed
 			{
-				getch();
+				_getch();
 				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
 			}
 			continue;
@@ -262,7 +264,8 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		m = ringBufGetMessage(storingBuffer);
+		//m = ringBufGetMessage(storingBuffer);<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
+		m.processId = -1;//<<<<<<<<<<<<<<
 		if (m.processId == -1)
 		{
 			Sleep(3000);
@@ -300,7 +303,6 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	retrievedData m;
-	printf("Nit konektovana na replicator2.\n");
 	SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
@@ -319,7 +321,7 @@ DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 			dataBuffer[iResult] = '\0';
 			m = *(retrievedData*)(dataBuffer);
 			printf("Message received from client.\n");
-			ringBufPutRetrievedData(retrievingBuffer,m);
+			//ringBufPutRetrievedData(retrievingBuffer,m); zakomentarisao sam buffer da bi mogo pokrenuti niti
 		}
 		else if (iResult == 0)
 		{

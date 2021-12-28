@@ -1,18 +1,7 @@
 ﻿  ConncetionWithReplicator2.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(264,8): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(301,6): warning C4101: 'iResult': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(309,8): warning C4101: 'message': unreferenced local variable
-  ConnectionWithService.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(25,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(179,10): warning C4101: 'args': unreferenced local variable
-  Map.cpp
-  ReplicatorFunctions.cpp
-  RingBuffer.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(56,32): warning C4018: '<': signed/unsigned mismatch
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(105,32): warning C4018: '<': signed/unsigned mismatch
-  main.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(32,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(31,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
-  Generating Code...
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(299): warning C4715: 'SendToReplicator2Thread': not all control paths return a value
-  Replicator.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(266,8): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(304,6): warning C4101: 'iResult': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(311,8): warning C4101: 'message': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(302): warning C4715: 'SendToReplicator2Thread': not all control paths return a value
+  Replicator.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Replicator.exe
