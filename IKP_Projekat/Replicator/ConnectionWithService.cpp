@@ -191,10 +191,8 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 	}
 	for (int i = 0;i < threadNum;i++)
 		CloseHandle(hListenForRegistrationsThread[i]);
-	//Close listen and accepted sockets
 	closesocket(listenSocket);
 
-	// Deinitialize WSA library
 	WSACleanup();
 }
 
