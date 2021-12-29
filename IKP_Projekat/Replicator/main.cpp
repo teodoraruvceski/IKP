@@ -8,23 +8,25 @@
 
 #include "ReplicatorPrimHeader.h"
 // TCP server that use non-blocking sockets
-extern RingBuffer* storingBuffer;
-extern RingBufferRetrieved* retrievingBuffer;
-extern CRITICAL_SECTION cs;
+//extern RingBuffer* storingBuffer;
+//extern RingBufferRetrieved* retrievingBuffer;
+//extern CRITICAL_SECTION cs;
 int main()
 {
-
+	RingBuffer storingBuffer;
+	RingBufferRetrieved retrievingBuffer;
+	static CRITICAL_SECTION cs;
 	InitializeCriticalSection(&cs);
 	//RingBuffer storingBuffer;
 	//RingBufferRetrieved retrievingBuffer;
 
-	retrievingBuffer->head = 0;
-	retrievingBuffer->tail = 0;
-	retrievingBuffer->count = 0;
+	retrievingBuffer.head = 0;
+	retrievingBuffer.tail = 0;
+	retrievingBuffer.count = 0;
 
-	storingBuffer->head = 0;
-	storingBuffer->tail = 0;
-	storingBuffer->count = 0;
+	storingBuffer.head = 0;
+	storingBuffer.tail = 0;
+	storingBuffer.count = 0;
 	/*ThreadArgs threadArgs;
 	threadArgs.storingBuffer = &storingBuffer;
 	threadArgs.retrievingBuffer = &retrievingBuffer;*/
@@ -34,8 +36,8 @@ int main()
 	HANDLE hListenForRegistrations;
 
 	//hListenForRegistrations = CreateThread(NULL, 0, &ListenForRegistrations, NULL, 0, &ListenForRegistrationsID);
-	ConncectWithReplicator2();
-	ListenForRegistrations();
+	ConncectWithReplicator2(&storingBuffer, &retrievingBuffer,&cs);
+	ListenForRegistrations(&storingBuffer, &retrievingBuffer, &cs);
 	_getch();
 
 	//CloseHandle(hListenForRegistrations);

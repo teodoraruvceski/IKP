@@ -1,12 +1,12 @@
 #include "ReplicatorPrimHeader.h"
-extern RingBuffer* storingBuffer;
-extern RingBufferRetrieved* retrievingBuffer;
-extern CRITICAL_SECTION cs;
+//extern RingBuffer* storingBuffer;
+//extern RingBufferRetrieved* retrievingBuffer;
+//extern CRITICAL_SECTION cs;
 
-struct message ringBufGetMessage() {
+struct message ringBufGetMessage(RingBuffer* storingBuffer,CRITICAL_SECTION* cs) {
 	message ret;
 	RingBuffer* apBuffer = storingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	if (apBuffer->count==0)
 	{
 		ret.processId = -1;
@@ -19,13 +19,13 @@ struct message ringBufGetMessage() {
 		ret = apBuffer->data[index];
 		apBuffer->count = apBuffer->count - 1;
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return ret;
 }
-struct message ringBufReadMessage() {
+struct message ringBufReadMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	message ret;
 	RingBuffer* apBuffer = storingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	if (apBuffer->count == 0)
 	{
 		ret.processId = -1;
@@ -35,12 +35,12 @@ struct message ringBufReadMessage() {
 		int index = apBuffer->head;
 		ret = apBuffer->data[index];
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return ret;
 }
-bool ringBufPutMessage(struct message m) {
+bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs,struct message m) {
 	RingBuffer* apBuffer = storingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	bool ret;
 	if (apBuffer->count<BUFFER_SIZE)
 	{
@@ -53,25 +53,25 @@ bool ringBufPutMessage(struct message m) {
 	{
 		ret = false;
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return true;
 }
 
-void printBuffer() {
+void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	RingBuffer* apBuffer = storingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
 		printf("Message: %s, ProcessId: %d.\n", apBuffer->data[i].text, apBuffer->data[i].processId);
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 }
 
 
-struct retrievedData ringBufGetRetrievedData()
+struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	retrievedData ret;
 	RingBufferRetrieved* apBuffer = retrievingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	if (apBuffer->count==0)
 	{
 		ret.processId = -1;
@@ -84,15 +84,15 @@ struct retrievedData ringBufGetRetrievedData()
 		ret = apBuffer->data[index];
 		apBuffer->count = apBuffer->count - 1;
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return ret;
 	
 }
-bool ringBufPutRetrievedData( struct retrievedData d)
+bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,struct retrievedData d)
 {
 	bool ret;
 	RingBufferRetrieved* apBuffer = retrievingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	if (apBuffer->count==BUFFER_SIZE)
 	{
 		ret = false;
@@ -105,13 +105,13 @@ bool ringBufPutRetrievedData( struct retrievedData d)
 		ret = true;
 	}
 	
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return true;
 }
-void printBufferRetrievedData()
+void printBufferRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	RingBufferRetrieved* apBuffer = retrievingBuffer;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
 		printf("ProcessId: %d.\nData:\n", apBuffer->data[i].processId);
 		for (int j = 0;j < apBuffer->data[i].dataCount;j++)
@@ -119,15 +119,15 @@ void printBufferRetrievedData()
 			printf("%s\n", apBuffer->data[i].data[j]);
 		}
 	}
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 }
-struct retrievedData ringBufReadRetrievedData()
+struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	retrievedData ret;
-	EnterCriticalSection(&cs);
+	EnterCriticalSection(cs);
 	int index = apBuffer->head;
 	ret= apBuffer->data[index];
-	LeaveCriticalSection(&cs);
+	LeaveCriticalSection(cs);
 	return ret;
 }

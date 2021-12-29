@@ -1,14 +1,5 @@
-﻿  main.cpp
-  Process.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(15,25): warning C4474: 'scanf' : too many arguments passed for format string
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(15,25): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(76,10): warning C4778: 'scanf_s' : unterminated format string '%h'
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(76,16): warning C4474: 'scanf_s' : too many arguments passed for format string
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(76,16): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(94,7): warning C4101: 'option': unreferenced local variable
-  Generating Code...
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(16): warning C4172: returning address of local variable or temporary: message
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(19): warning C4172: returning address of local variable or temporary: message
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(22): warning C4172: returning address of local variable or temporary: message
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(28): warning C4172: returning address of local variable or temporary: message
-  Process.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Debug\Process.exe
+﻿  Process.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(78,10): warning C4477: 'scanf_s' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(78,10): message : consider using '%hd' in the format string
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(96,7): warning C4101: 'option': unreferenced local variable
+  Process.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Process.exe

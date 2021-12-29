@@ -1,13 +1,15 @@
 #include "ReplicatorSecHeader.h"
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
-SOCKET connectSocket[NUMOF_THREADS_SENDING];
 
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer)
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs)
 {
-	clientConnection clientConnections[NUMOF_THREADS];
+	//clientConnection clientConnections[NUMOF_THREADS];
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
 	HANDLE hListenForReplicator1Thread[NUMOF_THREADS];
+	
+	ThreadArgs args[NUMOF_THREADS];
+
 	int threadNum = 0;
 	//hListenForRegistrationsThread = CreateThread(NULL, 0, &ListenForRegistrationsThread, &listenSocket, 0, &ListenForRegistrationsThreadID);
 	// Socket used for listening for new clients 
@@ -165,9 +167,11 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
-				clientConnections[threadNum].clientSocket = clientSockets[lastIndex];
-				clientConnections[threadNum].clientAddr = clientAddr;
-				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &clientConnections[threadNum], 0, &ListenForReplicator1ThreadID[threadNum]);
+				args[lastIndex].clientSocket = clientSockets[lastIndex];
+				args[lastIndex].storingBuffer = storingBuffer;
+				args[lastIndex].retrievingBuffer = retrievingBuffer;
+				args[lastIndex].cs = cs;
+				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &args[lastIndex], 0, &ListenForReplicator1ThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
 				if (threadNum == NUMOF_THREADS)
@@ -178,7 +182,8 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 	/// ////////////////////////////////////////////////////////////////////////////////////////
 	DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING];
-
+	SOCKET connectSocket[NUMOF_THREADS_SENDING];
+	ThreadArgs threadArgs[NUMOF_THREADS_SENDING];
 	printf("Konektovanje na rep1 \n");
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
@@ -222,10 +227,10 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 			return;
 		}
 		ThreadArgs threadArgs;
-		threadArgs.clientSocket = &connectSocket[numOfConnected];
+		threadArgs.clientSocket = connectSocket[numOfConnected];
 		threadArgs.storingBuffer = storingBuffer;
 		threadArgs.retrievingBuffer = retrievingBuffer;
-		threadArgs.cs = &cs;
+		threadArgs.cs = cs;
 		hSendToReplicator1Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator1Thread, &threadArgs, 0, &SendToReplicator1ThreadID[numOfConnected]);
 
 		numOfConnected++;
@@ -345,12 +350,11 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	WSACleanup();
 
 }
-//fja u kojoj je rep2 klijent
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
 	printf("Nit konektovana na replicator2.\n");
-	SOCKET connectSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
+	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
@@ -359,7 +363,7 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		m = ringBufGetMessage(storingBuffer);
+		m = ringBufGetMessage(storingBuffer,cs);
 		if (m.processId == -1)
 		{
 			Sleep(3000);

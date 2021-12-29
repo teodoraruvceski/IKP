@@ -1,19 +1,7 @@
-﻿ConncetionWithReplicator2.obj : error LNK2019: unresolved external symbol "bool __cdecl ringBufPutRetrievedData(struct RingBufferRetrieved *,struct retrievedData)" (?ringBufPutRetrievedData@@YA_NPAURingBufferRetrieved@@UretrievedData@@@Z) referenced in function "unsigned long __stdcall ReccvFromReplicator2Thread(void *)" (?ReccvFromReplicator2Thread@@YGKPAX@Z)
-    Hint on symbols that are defined and could potentially match:
-      "bool __cdecl ringBufPutRetrievedData(struct retrievedData)" (?ringBufPutRetrievedData@@YA_NUretrievedData@@@Z)
-ConncetionWithReplicator2.obj : error LNK2001: unresolved external symbol "struct _RTL_CRITICAL_SECTION cs" (?cs@@3U_RTL_CRITICAL_SECTION@@A)
-main.obj : error LNK2001: unresolved external symbol "struct _RTL_CRITICAL_SECTION cs" (?cs@@3U_RTL_CRITICAL_SECTION@@A)
-RingBuffer.obj : error LNK2001: unresolved external symbol "struct _RTL_CRITICAL_SECTION cs" (?cs@@3U_RTL_CRITICAL_SECTION@@A)
-ConnectionWithService.obj : error LNK2019: unresolved external symbol "bool __cdecl ringBufPutMessage(struct RingBuffer *,struct message)" (?ringBufPutMessage@@YA_NPAURingBuffer@@Umessage@@@Z) referenced in function "unsigned long __stdcall ListenForRegistrationsThread(void *)" (?ListenForRegistrationsThread@@YGKPAX@Z)
-    Hint on symbols that are defined and could potentially match:
-      "bool __cdecl ringBufPutMessage(struct message)" (?ringBufPutMessage@@YA_NUmessage@@@Z)
-ConnectionWithService.obj : error LNK2019: unresolved external symbol "void __cdecl printBuffer(struct RingBuffer *)" (?printBuffer@@YAXPAURingBuffer@@@Z) referenced in function "unsigned long __stdcall ListenForRegistrationsThread(void *)" (?ListenForRegistrationsThread@@YGKPAX@Z)
-    Hint on symbols that are defined and could potentially match:
-      "void __cdecl printBuffer(void)" (?printBuffer@@YAXXZ)
-ConnectionWithService.obj : error LNK2019: unresolved external symbol "struct retrievedData __cdecl ringBufGetRetrievedData(struct RingBufferRetrieved *)" (?ringBufGetRetrievedData@@YA?AUretrievedData@@PAURingBufferRetrieved@@@Z) referenced in function "unsigned long __stdcall ListenForRegistrationsThread(void *)" (?ListenForRegistrationsThread@@YGKPAX@Z)
-    Hint on symbols that are defined and could potentially match:
-      "struct retrievedData __cdecl ringBufGetRetrievedData(void)" (?ringBufGetRetrievedData@@YA?AUretrievedData@@XZ)
-ConnectionWithService.obj : error LNK2019: unresolved external symbol "struct retrievedData __cdecl ringBufReadRetrievedData(struct RingBufferRetrieved *)" (?ringBufReadRetrievedData@@YA?AUretrievedData@@PAURingBufferRetrieved@@@Z) referenced in function "unsigned long __stdcall ListenForRegistrationsThread(void *)" (?ListenForRegistrationsThread@@YGKPAX@Z)
-    Hint on symbols that are defined and could potentially match:
-      "struct retrievedData __cdecl ringBufReadRetrievedData(void)" (?ringBufReadRetrievedData@@YA?AUretrievedData@@XZ)
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe : fatal error LNK1120: 6 unresolved externals
+﻿  ConncetionWithReplicator2.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(25,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(273,8): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(311,6): warning C4101: 'iResult': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(319,8): warning C4101: 'message': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(309): warning C4715: 'SendToReplicator2Thread': not all control paths return a value
+  Replicator.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Debug\Replicator.exe

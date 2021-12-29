@@ -32,10 +32,10 @@ struct port {
 
 
 static struct port ports[MAX_CLIENTS];
-static CRITICAL_SECTION cs;
+
 
 struct ThreadArgs {
-    SOCKET* clientSocket;
+    SOCKET clientSocket;
     sockaddr_in clientAddr;
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
@@ -54,7 +54,7 @@ struct clientConnection {
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer);
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs);
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);
 

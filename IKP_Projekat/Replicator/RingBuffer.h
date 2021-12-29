@@ -27,12 +27,12 @@ struct RingBuffer {
 	struct message data[RING_SIZE];
 };
 // Operacije za rad sa kruznim baferom 
-struct message ringBufGetMessage(RingBuffer* apBuffer);
-bool ringBufPutMessage(RingBuffer* apBuffer, struct message m);
-void printBuffer(RingBuffer *apBuffer);
-struct message ringBufReadMessage(RingBuffer* apBuffer);
+struct message ringBufGetMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
+bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message m);
+void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
+struct message ringBufReadMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
 
-struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* apBuffer);
-bool ringBufPutRetrievedData(RingBufferRetrieved* apBuffer, struct retrievedData d);
-void printBufferRetrievedData(RingBufferRetrieved *apBuffer);
-struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* apBuffer);
+struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
+bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, struct retrievedData d);
+void printBufferRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);
+struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs);

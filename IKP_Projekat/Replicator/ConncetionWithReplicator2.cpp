@@ -3,17 +3,17 @@
 SOCKET clientSockets[NUMOF_THREADS_RECV];
 SOCKET connectSocket[NUMOF_THREADS_SENDING];
 
-extern RingBuffer* storingBuffer;
-extern RingBufferRetrieved* retrievingBuffer;
-extern CRITICAL_SECTION cs;
+//extern RingBuffer* storingBuffer;
+//extern RingBufferRetrieved* retrievingBuffer;
+//extern CRITICAL_SECTION cs;
 
 
-void ConncectWithReplicator2() {
+void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs) {
 
 	// Socket used to communicate with server
 	DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING];
-
+	ThreadArgs args[NUMOF_THREADS_RECV];
 	
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
@@ -56,12 +56,12 @@ void ConncectWithReplicator2() {
 			WSACleanup();
 			return;
 		}
-		ThreadArgs threadArgs;
-		threadArgs.clientSocket = numOfConnected;
-		threadArgs.storingBuffer = storingBuffer;
-		threadArgs.retrievingBuffer = retrievingBuffer;
-		threadArgs.cs = &cs;
-		hConnectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator2Thread, &threadArgs, 0, &ConnectWithReplicator2ThreadID[numOfConnected]);
+		//ThreadArgs threadArgs;
+		args[numOfConnected].clientSocket = clientSockets[numOfConnected];
+		args[numOfConnected].storingBuffer = storingBuffer;
+		args[numOfConnected].retrievingBuffer = retrievingBuffer;
+		args[numOfConnected].cs = cs;
+		hConnectWithReplicator2Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator2Thread, &args[numOfConnected], 0, &ConnectWithReplicator2ThreadID[numOfConnected]);
 		
 		numOfConnected++;
 	}
@@ -238,7 +238,7 @@ void ConncectWithReplicator2() {
 				threadArgs[lastIndex].clientSocket = lastIndex;
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
-				threadArgs[lastIndex].cs = &cs;
+				threadArgs[lastIndex].cs = cs;
 				//char args[8];
 
 				hListenForRecvRep2Thread[threadNum] = CreateThread(NULL, 0, &ReccvFromReplicator2Thread, &threadArgs[lastIndex], 0, &ListenForRecvRep2ThreadID[threadNum]);
@@ -261,48 +261,48 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
 	printf("Nit konektovana na replicator2.\n");
-	//SOCKET connectSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
-	int socket = (*(ThreadArgs*)(lpParams)).clientSocket;
-	//RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
-	//RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
-	//CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	//int socket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	Sleep(3000);
 	
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		//m = ringBufGetMessage(storingBuffer);<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
-		m.processId = -1;//<<<<<<<<<<<<<<
+		m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
+		//m.processId = -1;//<<<<<<<<<<<<<<
 		if (m.processId == -1)
 		{
 			Sleep(3000);
 			continue;
 		}
-		printf("Cheking for messages to send...\n");
-		iResult = send(connectSocket[socket], (char*)&m, (short)sizeof(message), 0);
+		printf("Checking for messages to send...\n");
+		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
 		// Check result of send function
 		if (iResult == SOCKET_ERROR)
 		{
-			printf("send failed with error: %d\n", WSAGetLastError());
-			closesocket(connectSocket[socket]);
+			printf("send failed with error in sending to REP2: %d\n", WSAGetLastError());
+			closesocket(connectSocket);
 			WSACleanup();
 			break;
 		}
 		printf("Sent data to replicator2.");
 	}
 	// Shutdown the connection since we're done
-	iResult = shutdown(connectSocket[socket], SD_BOTH);
+	iResult = shutdown(connectSocket, SD_BOTH);
 	// Check if connection is succesfully shut down.
 	if (iResult == SOCKET_ERROR)
 	{
 		printf("Shutdown failed with error: %d\n", WSAGetLastError());
-		closesocket(connectSocket[socket]);
+		closesocket(connectSocket);
 		WSACleanup();
 		return -1;
 	}
 	Sleep(1000);
 	// Close connected socket
-	closesocket(connectSocket[socket]);
+	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
 
@@ -311,10 +311,10 @@ DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	retrievedData m;
 	//SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
-	int socket= (*(ThreadArgs*)(lpParams)).clientSocket;
-	//RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
-	//RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
-	//CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	SOCKET socket= (*(ThreadArgs*)(lpParams)).clientSocket;
+	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	Sleep(3000);
 	char* message;
 	while (1)
@@ -323,13 +323,13 @@ DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 		int iResult;
 		
 		
-		iResult = recv(clientSockets[socket], dataBuffer, BUFFER_SIZE, 0);
+		iResult = recv(socket, dataBuffer, BUFFER_SIZE, 0);
 		if (iResult > 0)
 		{
 			dataBuffer[iResult] = '\0';
 			m = *(retrievedData*)(dataBuffer);
 			printf("Message received from client.\n");
-			ringBufPutRetrievedData(retrievingBuffer,m); //zakomentarisao sam buffer da bi mogo pokrenuti niti
+			ringBufPutRetrievedData(retrievingBuffer,cs,m); //zakomentarisao sam buffer da bi mogo pokrenuti niti
 		}
 		else if (iResult == 0)
 		{
