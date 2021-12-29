@@ -1,6 +1,6 @@
 #include "process.h"
 
-char* Menu() {
+void Menu(struct message* messageForRepl) {
 	char option;
 	//char message[MESSAGE_LEN];
 	char* message = (char*)malloc(MESSAGE_LEN);
@@ -14,20 +14,24 @@ char* Menu() {
 			case '1':
 				printf("Unesite poruku: ");
 				scanf("%s", message); ////OVO OVDE JE KOD SASE TACKA 3 SA GRESKOM ALI JA SE SECAM DA OVAJ SCANF NIJE RADIO DOK NISI STAVIO TU DVOJKU
-				return message;
+				strcpy(messageForRepl->text, message);
+				return;
+				//return message;
 			case '2':
-				//strcpy(message, "get_data_from_replica");
-				memcpy(message, "get_data_from_replica", strlen("get_data_from_replica"));
-				return message;
+				strcpy(messageForRepl->text, "get_data_from_replica");
+				//memcpy(message, "get_data_from_replica", strlen("get_data_from_replica"));
+				//return message;
+				return;
 			case '3':
-				strcpy(message, "turn_off");
-				return message;
+				strcpy(messageForRepl->text, "get_data_from_replica");
+				//return message;
+				return;;
 			default:
 				printf("Pogresan unos opcije.");
 				break;			
 		}
 	}
-	return message;
+	//return message;
 }
 
 void SendData(int serviceId, void* data, int dataSize) {}
@@ -97,12 +101,14 @@ void RegisterService() {
 		struct message messageForRepl;
 
 		//char message[MESSAGE_LEN];
-		strcpy(messageForRepl.text,Menu());//Dobavljanje komande koju saljemo replicator1
+		//strcpy(messageForRepl.text,Menu(&message));//Dobavljanje komande koju saljemo replicator1
+		Menu(&messageForRepl);
 		messageForRepl.serviceId = serviceId;
-		
+
+		printf("SEND: %d : %s", messageForRepl.serviceId,messageForRepl.text);
 		//printf("ID... id %d", messageForRepl.serviceId);
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
-			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(messageForRepl), 0);
+			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(message), 0);
 			// Check result of send function
 			if (iResult == SOCKET_ERROR)
 			{
@@ -125,7 +131,7 @@ void RegisterService() {
 			return;
 		}
 		else{
-			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(struct message), 0);
+			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(message), 0);
 			// Check result of send function
 			if (iResult == SOCKET_ERROR)
 			{

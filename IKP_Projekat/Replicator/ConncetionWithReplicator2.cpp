@@ -1,19 +1,19 @@
 #include "ReplicatorPrimHeader.h"
 
-SOCKET clientSockets[NUMOF_THREADS_RECV];
-SOCKET connectSocket[NUMOF_THREADS_SENDING];
+
 
 //extern RingBuffer* storingBuffer;
 //extern RingBufferRetrieved* retrievingBuffer;
 //extern CRITICAL_SECTION cs;
 
 
-void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs) {
+void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSockets, SOCKET* connectSocket) {
 
 	// Socket used to communicate with server
 	DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING];
 	ThreadArgs args[NUMOF_THREADS_RECV];
+	
 	
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
@@ -57,7 +57,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 			return;
 		}
 		//ThreadArgs threadArgs;
-		args[numOfConnected].clientSocket = clientSockets[numOfConnected];
+		args[numOfConnected].clientSocket = connectSocket[numOfConnected];
 		args[numOfConnected].storingBuffer = storingBuffer;
 		args[numOfConnected].retrievingBuffer = retrievingBuffer;
 		args[numOfConnected].cs = cs;
@@ -235,7 +235,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 					continue;
 				}
 				threadArgs[lastIndex].clientAddr = clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
-				threadArgs[lastIndex].clientSocket = lastIndex;
+				threadArgs[lastIndex].clientSocket = clientSockets[lastIndex];
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
@@ -260,8 +260,9 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
-	printf("Nit konektovana na replicator2.\n");
 	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	printf("Nit konektovana na replicator2. \n");
+
 	//int socket = (*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
@@ -271,22 +272,23 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
-		//m.processId = -1;//<<<<<<<<<<<<<<
+		//printBuffer(storingBuffer,cs);
+		//m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
+		m.processId = -1;//<<<<<<<<<<<<<<
 		if (m.processId == -1)
 		{
 			Sleep(3000);
 			continue;
 		}
 		printf("Checking for messages to send...\n");
-		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
+		iResult = send(connectSocket, (char*)&m, (short)sizeof(struct message), 0);
 		// Check result of send function
 		if (iResult == SOCKET_ERROR)
 		{
 			printf("send failed with error in sending to REP2: %d\n", WSAGetLastError());
-			closesocket(connectSocket);
-			WSACleanup();
-			break;
+			//closesocket(connectSocket);
+			//WSACleanup();
+			//break;
 		}
 		printf("Sent data to replicator2.");
 	}

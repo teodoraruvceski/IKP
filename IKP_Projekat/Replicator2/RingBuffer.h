@@ -2,10 +2,11 @@
 // Kruzni bafer - FIFO 
 #define RING_SIZE 50
 #define BUFFER_SIZE 4096
+#define TEXT_SIZE 2048
 
 
 struct message {
-	char text[BUFFER_SIZE];
+	char text[TEXT_SIZE];
 	short processId;
 };
 

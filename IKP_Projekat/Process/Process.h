@@ -19,7 +19,7 @@
 #define SERVER_IP_ADDRESS "127.0.0.1"
 #define SERVER_PORT 27016
 #define BUFFER_SIZE 4096
-#define MESSAGE_LEN 40
+#define MESSAGE_LEN 2048
 
 struct process {
     char ipAddr[15];
@@ -38,7 +38,7 @@ void SendData(int serviceId, void* data, int dataSize);
 
 void RecieveData(void* data, int dataSize);
 
-char* Menu();
+void Menu();
 //void StartProcess();
 
 #endif

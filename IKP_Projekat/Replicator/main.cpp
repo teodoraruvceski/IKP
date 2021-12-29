@@ -13,6 +13,10 @@
 //extern CRITICAL_SECTION cs;
 int main()
 {
+	SOCKET clientSocketsRep2[NUMOF_THREADS_RECV];//sockets for listening to rep2
+	SOCKET connectSocketRep2[NUMOF_THREADS_SENDING];//sockets for sending data to rep2
+	SOCKET clientSocketsProcess[MAX_CLIENTS]; //sockets for listening to processes
+
 	RingBuffer storingBuffer;
 	RingBufferRetrieved retrievingBuffer;
 	static CRITICAL_SECTION cs;
@@ -36,8 +40,8 @@ int main()
 	HANDLE hListenForRegistrations;
 
 	//hListenForRegistrations = CreateThread(NULL, 0, &ListenForRegistrations, NULL, 0, &ListenForRegistrationsID);
-	ConncectWithReplicator2(&storingBuffer, &retrievingBuffer,&cs);
-	ListenForRegistrations(&storingBuffer, &retrievingBuffer, &cs);
+	ConncectWithReplicator2(&storingBuffer, &retrievingBuffer,&cs, clientSocketsRep2, connectSocketRep2);
+	ListenForRegistrations(&storingBuffer, &retrievingBuffer, &cs, clientSocketsProcess);
 	_getch();
 
 	//CloseHandle(hListenForRegistrations);

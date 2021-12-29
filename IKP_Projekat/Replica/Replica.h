@@ -10,6 +10,7 @@
 #include <ws2tcpip.h>
 #include "conio.h"
 #include <iostream> 
+#include "List.h"
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
@@ -17,10 +18,23 @@
 #pragma pack(1)
 
 #define SERVER_IP_ADDRESS "127.0.0.1"
-#define SERVER_PORT 27019 /// port replikatora1 na koj i se konektuju procesi
+#define SERVER_PORT 27019 /// port replikatora2 na koj i se konektuju replike
 #define BUFFER_SIZE 4096
 
-static CRITICAL_SECTION cs;
+#define MAX_CLIENTS 20
+#define NUMOF_THREADS 1
+#define TEXT_SIZE 2048
+
+struct message {
+	char text[TEXT_SIZE];
+	short processId;
+};
+
+struct retrievedData {
+	char** data;
+	short processId;
+	int dataCount;
+};
 
 
 struct ThreadArgs {

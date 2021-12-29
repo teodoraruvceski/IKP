@@ -3,6 +3,7 @@
 
 int main()
 {
+	SOCKET clientSocketsReplica[NUMOF_THREADS];
 	CRITICAL_SECTION cs;
 	InitializeCriticalSection(&cs);
 	RingBuffer storingBuffer;
@@ -17,6 +18,7 @@ int main()
 	storingBuffer.count = 0;
 
 	ListenForReplicator1Registrations(&storingBuffer,&retrievingBuffer,&cs);
+	ListenForReplica(&storingBuffer, &retrievingBuffer, &cs, clientSocketsReplica);
 	_getch();
 	return 0;
 }

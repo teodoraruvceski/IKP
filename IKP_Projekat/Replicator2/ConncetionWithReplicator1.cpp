@@ -246,110 +246,56 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 {
 	printf("Nit kreirana kao server, slusa poruke od rep1.\n");
-	_getch();
-	//SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
-	//sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
-	//RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
-	//RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
-	//CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
-	//// Sockets used for communication with client
-	//bool flag = false;
-	//char* message;
-	//struct process newProcess;
+	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
+	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	// Sockets used for communication with client
+	
+	char* message;
+	struct process newProcess;
 
-	//char* newAddr = inet_ntoa(clientAddr.sin_addr);
-	//strcpy(newProcess.ipAddr, newAddr);
-	//newProcess.port = ntohs(clientAddr.sin_port);
-	//printf("New replicator1 connection request accepted . Replicator1 connection address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
-
-	//while (1)
-	//{
-	//	char dataBuffer[BUFFER_SIZE];
-	//	int iResult;
-	//	if (flag == false)
-	//	{
-	//		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-	//		if (iResult > 0)
-	//		{
-	//			dataBuffer[iResult] = '\0';
-	//			//printf("Message received from client:\n");
-	//			message = dataBuffer;
-	//			short* pom = ((short*)(message));
-	//			newProcess.id = ntohs(*pom);
-	//			printf("Registration message %d \n", newProcess.id);
-	//			flag = true;
-	//			printf("_______________________________  \n");
-	//			int newPort = RegisterService(newProcess); //cuvanje 
-	//			if (iResult == SOCKET_ERROR)
-	//			{
-	//				printf("send failed with error: %d\n", WSAGetLastError());
-	//				closesocket(clientSocket);
-	//				WSACleanup();
-	//				return 0;
-	//				//return;
-	//			}
-	//			printf("Response successfully sent. Total bytes: %ld\n", iResult);
-	//			continue;
-	//		}
-	//		else if (iResult == 0)
-	//		{
-	//			// connection was closed gracefully
-	//			printf("Connection with client closed.\n");
-	//			closesocket(clientSocket);
-	//		}
-	//		else
-	//		{
-	//			// there was an error during recv
-	//			//printf("recv failed with error: %d RECIVING ID\n", WSAGetLastError());
-	//			//closesocket(clientSocket);
-	//		}
-	//	}
-	//	iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-	//	if (iResult > 0)
-	//	{
-	//		dataBuffer[iResult] = '\0';
-	//		printf("Message received from client\n");
-	//		struct message* message2 = (struct message*)dataBuffer;
-	//		message2->serviceId = ntohs(message2->serviceId);
-	//		if (strcmp(message2->text, "get_data_from_replica") == 0) {
+	while (1)
+	{
+		char dataBuffer[BUFFER_SIZE];
+		int iResult;
+		
+		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+		if (iResult > 0)
+		{			
+			dataBuffer[iResult] = '\0';
+			printf("Message received from client\n");
+			struct message* message2 = (struct message*)dataBuffer;
+			if (strcmp(message2->text, "REGISTRATION") == 0) {
+				printf("Recieved REGISTRATION message from REP1.\n");
+				//code for creating NEW INSTANCE <3
+			}
+			else {
+				printf("Recieved message from REP1, and stored in storingBuffer.\n");
+				ringBufPutMessage(storingBuffer, cs,*message2);
+			}
+		}
+		else if (iResult == 0)
+		{
+			// connection was closed gracefully
+			printf("Connection with client closed.\n");
+			//closesocket(clientSocket);
+		}
+		else
+		{
+			//there was an error during recv
+			//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+			//closesocket(clientSocket);
+		}
+		//Close listen and accepted sockets
+		//closesocket(listenSocket);
 
 
-
-		//		//iResult = send(clientSocket, (char*)&newPort, (int)sizeof(int), 0);
-		//		//if (iResult == SOCKET_ERROR)
-		//		//{
-		//		//	printf("send failed with error: %d\n", WSAGetLastError());
-		//		//	closesocket(clientSocket);
-		//		//	WSACleanup();
-		//		//	return 0;
-		//		//	//return;
-		//		//}
-		//		//printf("Response successfully sent. Total bytes: %ld\n", iResult);
-		//	}
-		//	else {
-		//		printf("\nPoruka %s  id= %d", message2->text, message2->serviceId);
-		//	}
-		//}
-		//else if (iResult == 0)
-		//{
-		//	// connection was closed gracefully
-		//	printf("Connection with client closed.\n");
-		//	closesocket(clientSocket);
-		//}
-		//else
-		//{
-		//	//there was an error during recv
-		//	//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
-		//	//closesocket(clientSocket);
-		//}
-		////Close listen and accepted sockets
-		////closesocket(listenSocket);
-
-
-	//}
+	}
 	// Deinitialize WSA library
-	//WSACleanup();
-return 0;
+	WSACleanup();
+	return 0;
 }
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	int iResult;

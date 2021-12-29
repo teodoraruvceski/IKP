@@ -22,6 +22,7 @@
 #define SERVER_IP_ADDRESS "127.0.0.1"
 #define SERVER_PORT 27017
 #define SERVER_PORT_REP1 27018
+#define REPLICA_LISTEN_PORT 27019
 #define MAX_CLIENTS 10
 #define NUMOF_THREADS 3
 #define NUMOF_THREADS_SENDING 3
@@ -55,8 +56,10 @@ struct clientConnection {
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
 void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs);
+void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSocketsReplica);
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);
+DWORD WINAPI SendToReplica(LPVOID lpParams);
 
 bool RegisterService(struct process);
 
