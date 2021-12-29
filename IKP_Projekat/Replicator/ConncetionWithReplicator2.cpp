@@ -170,7 +170,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 	//struct process newProcess;
 	while (true)
 	{
-		if (lastIndex + 1 == NUMOF_THREADS_RECV)
+		if (lastIndex  == NUMOF_THREADS_RECV)
 			break;
 		// initialize socket set
 		FD_ZERO(&readfds);

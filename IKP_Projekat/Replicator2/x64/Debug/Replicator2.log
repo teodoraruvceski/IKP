@@ -1,13 +1,6 @@
 ﻿  ConncetionWithReplicator1.cpp
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(23,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(186,13): warning C4101: 'threadArgs': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(197,10): warning C4101: 'wsaData2': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(255,8): warning C4101: 'message': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(365,8): warning C4101: 'dataBuffer': unreferenced local variable
-  main.cpp
-  RingBuffer.cpp
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\RingBuffer.cpp(60,32): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\RingBuffer.cpp(112,32): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-C:\Users\Nebojsa\Desktop\dorinIKP\Replicator2\ConncetionWithReplicator1.cpp(400): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
-  Replicator2.vcxproj -> C:\Users\Nebojsa\Desktop\dorinIKP\x64\Debug\Replicator2.exe
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(23,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(197,10): warning C4101: 'wsaData2': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(366,8): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(401): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
+  Replicator2.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Replicator2.exe

@@ -8,7 +8,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
 	HANDLE hListenForReplicator1Thread[NUMOF_THREADS];
 	
-	ThreadArgs args[NUMOF_THREADS];
+	ThreadArgs threadArgs[NUMOF_THREADS];
 
 	int threadNum = 0;
 	//hListenForRegistrationsThread = CreateThread(NULL, 0, &ListenForRegistrationsThread, &listenSocket, 0, &ListenForRegistrationsThreadID);
@@ -167,11 +167,11 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
-				args[lastIndex].clientSocket = clientSockets[lastIndex];
-				args[lastIndex].storingBuffer = storingBuffer;
-				args[lastIndex].retrievingBuffer = retrievingBuffer;
-				args[lastIndex].cs = cs;
-				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &args[lastIndex], 0, &ListenForReplicator1ThreadID[threadNum]);
+				threadArgs[lastIndex].clientSocket = clientSockets[lastIndex];
+				threadArgs[lastIndex].storingBuffer = storingBuffer;
+				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
+				threadArgs[lastIndex].cs = cs;
+				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &threadArgs[lastIndex], 0, &ListenForReplicator1ThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
 				if (threadNum == NUMOF_THREADS)
@@ -183,7 +183,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 	DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING];
 	SOCKET connectSocket[NUMOF_THREADS_SENDING];
-	ThreadArgs threadArgs[NUMOF_THREADS_SENDING];
+	ThreadArgs threadArgs2[NUMOF_THREADS_SENDING];
 	printf("Konektovanje na rep1 \n");
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
@@ -226,12 +226,11 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 			WSACleanup();
 			return;
 		}
-		ThreadArgs threadArgs;
-		threadArgs.clientSocket = connectSocket[numOfConnected];
-		threadArgs.storingBuffer = storingBuffer;
-		threadArgs.retrievingBuffer = retrievingBuffer;
-		threadArgs.cs = cs;
-		hSendToReplicator1Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator1Thread, &threadArgs, 0, &SendToReplicator1ThreadID[numOfConnected]);
+		threadArgs2[numOfConnected].clientSocket = connectSocket[numOfConnected];
+		threadArgs2[numOfConnected].storingBuffer = storingBuffer;
+		threadArgs2[numOfConnected].retrievingBuffer = retrievingBuffer;
+		threadArgs2[numOfConnected].cs = cs;
+		hSendToReplicator1Thread[numOfConnected] = CreateThread(NULL, 0, &SendToReplicator1Thread, &threadArgs2[numOfConnected], 0, &SendToReplicator1ThreadID[numOfConnected]);
 
 		numOfConnected++;
 	}
@@ -246,71 +245,73 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 {
+	printf("Nit kreirana kao server, slusa poruke od rep1.\n");
+	_getch();
+	//SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	//sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
+	//RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
+	//RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	//CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	//// Sockets used for communication with client
+	//bool flag = false;
+	//char* message;
+	//struct process newProcess;
 
-	SOCKET clientSocket = (*(clientConnection*)(lpParams)).clientSocket;
-	sockaddr_in clientAddr = (*(clientConnection*)(lpParams)).clientAddr;
-	// Sockets used for communication with client
+	//char* newAddr = inet_ntoa(clientAddr.sin_addr);
+	//strcpy(newProcess.ipAddr, newAddr);
+	//newProcess.port = ntohs(clientAddr.sin_port);
+	//printf("New replicator1 connection request accepted . Replicator1 connection address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
-	bool flag = false;
-	char* message;
-	struct process newProcess;
-
-	char* newAddr = inet_ntoa(clientAddr.sin_addr);
-	strcpy(newProcess.ipAddr, newAddr);
-	newProcess.port = ntohs(clientAddr.sin_port);
-	printf("New replicator1 connection request accepted . Replicator1 connection address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
-
-	while (1)
-	{
-		_getch();
-		//char dataBuffer[BUFFER_SIZE];
-		//int iResult;
-		//if (flag == false)
-		//{
-		//	iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-		//	if (iResult > 0)
-		//	{
-		//		dataBuffer[iResult] = '\0';
-		//		//printf("Message received from client:\n");
-		//		message = dataBuffer;
-		//		short* pom = ((short*)(message));
-		//		newProcess.id = ntohs(*pom);
-		//		printf("Registration message %d \n", newProcess.id);
-		//		flag = true;
-		//		printf("_______________________________  \n");
-		//		int newPort = RegisterService(newProcess); //cuvanje 
-		//		if (iResult == SOCKET_ERROR)
-		//		{
-		//			printf("send failed with error: %d\n", WSAGetLastError());
-		//			closesocket(clientSocket);
-		//			WSACleanup();
-		//			return 0;
-		//			//return;
-		//		}
-		//		printf("Response successfully sent. Total bytes: %ld\n", iResult);
-		//		continue;
-		//	}
-		//	else if (iResult == 0)
-		//	{
-		//		// connection was closed gracefully
-		//		printf("Connection with client closed.\n");
-		//		closesocket(clientSocket);
-		//	}
-		//	else
-		//	{
-		//		// there was an error during recv
-		//		//printf("recv failed with error: %d RECIVING ID\n", WSAGetLastError());
-		//		//closesocket(clientSocket);
-		//	}
-		//}
-		//iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-		//if (iResult > 0)
-		//{
-		//	dataBuffer[iResult] = '\0';
-		//	printf("Message received from client\n");
-		//	struct message* message2 = (struct message*)dataBuffer;
-		//	message2->serviceId = ntohs(message2->serviceId);
-		//	if (strcmp(message2->text, "get_data_from_replica") == 0) {
+	//while (1)
+	//{
+	//	char dataBuffer[BUFFER_SIZE];
+	//	int iResult;
+	//	if (flag == false)
+	//	{
+	//		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+	//		if (iResult > 0)
+	//		{
+	//			dataBuffer[iResult] = '\0';
+	//			//printf("Message received from client:\n");
+	//			message = dataBuffer;
+	//			short* pom = ((short*)(message));
+	//			newProcess.id = ntohs(*pom);
+	//			printf("Registration message %d \n", newProcess.id);
+	//			flag = true;
+	//			printf("_______________________________  \n");
+	//			int newPort = RegisterService(newProcess); //cuvanje 
+	//			if (iResult == SOCKET_ERROR)
+	//			{
+	//				printf("send failed with error: %d\n", WSAGetLastError());
+	//				closesocket(clientSocket);
+	//				WSACleanup();
+	//				return 0;
+	//				//return;
+	//			}
+	//			printf("Response successfully sent. Total bytes: %ld\n", iResult);
+	//			continue;
+	//		}
+	//		else if (iResult == 0)
+	//		{
+	//			// connection was closed gracefully
+	//			printf("Connection with client closed.\n");
+	//			closesocket(clientSocket);
+	//		}
+	//		else
+	//		{
+	//			// there was an error during recv
+	//			//printf("recv failed with error: %d RECIVING ID\n", WSAGetLastError());
+	//			//closesocket(clientSocket);
+	//		}
+	//	}
+	//	iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+	//	if (iResult > 0)
+	//	{
+	//		dataBuffer[iResult] = '\0';
+	//		printf("Message received from client\n");
+	//		struct message* message2 = (struct message*)dataBuffer;
+	//		message2->serviceId = ntohs(message2->serviceId);
+	//		if (strcmp(message2->text, "get_data_from_replica") == 0) {
 
 
 
@@ -345,15 +346,15 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 		////closesocket(listenSocket);
 
 
-	}
+	//}
 	// Deinitialize WSA library
-	WSACleanup();
-
+	//WSACleanup();
+return 0;
 }
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	int iResult;
 	message m;
-	printf("Nit konektovana na replicator2.\n");
+	printf("Nit konektovana na replicator1 kao klijent.\n");
 	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;

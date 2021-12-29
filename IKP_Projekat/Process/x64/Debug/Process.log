@@ -1,7 +1,1 @@
-﻿  main.cpp
-  Process.cpp
-C:\Users\Nebojsa\Desktop\dorinIKP\Process\Process.cpp(78,10): warning C4477: 'scanf_s' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
-C:\Users\Nebojsa\Desktop\dorinIKP\Process\Process.cpp(78,10): message : consider using '%hd' in the format string
-C:\Users\Nebojsa\Desktop\dorinIKP\Process\Process.cpp(96,7): warning C4101: 'option': unreferenced local variable
-  Generating Code...
-  Process.vcxproj -> C:\Users\Nebojsa\Desktop\dorinIKP\x64\Debug\Process.exe
+﻿  Process.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Process.exe
