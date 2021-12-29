@@ -1,9 +1,1 @@
-﻿  ConnectionWithReplicator2.cpp
-C:\Users\Nebojsa\Desktop\dorinIKP\Replica\ConnectionWithReplicator2.cpp(7,8): warning C4101: 'ListenForRegistrationsThreadID': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replica\ConnectionWithReplicator2.cpp(25,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replica\ConnectionWithReplicator2.cpp(9,13): warning C4101: 'threadArgs': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replica\ConnectionWithReplicator2.cpp(8,9): warning C4101: 'hListenForRegistrationsThread': unreferenced local variable
-C:\Users\Nebojsa\Desktop\dorinIKP\Replica\ConnectionWithReplicator2.cpp(102,9): warning C4101: 'readfds': unreferenced local variable
-  main.cpp
-  Generating Code...
-  Replica.vcxproj -> C:\Users\Nebojsa\Desktop\dorinIKP\x64\Debug\Replica.exe
+﻿  Replica.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Replica.exe

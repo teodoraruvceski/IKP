@@ -180,8 +180,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
 				char args[8];
-				//memset(args, (int)&cc, 4);
-				//memset(args+4, (int)storingBuffer, 4);
+				
 
 				hListenForRegistrationsThread[threadNum] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &threadArgs[lastIndex], 0, &ListenForRegistrationsThreadID[threadNum]);
 				threadNum++;
