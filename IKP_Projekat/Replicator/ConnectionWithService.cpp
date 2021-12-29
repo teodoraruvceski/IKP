@@ -12,23 +12,32 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 	ThreadArgs threadArgs[MAX_CLIENTS];
 
 	int threadNum = 0;
-	
+	//hListenForRegistrationsThread = CreateThread(NULL, 0, &ListenForRegistrationsThread, &listenSocket, 0, &ListenForRegistrationsThreadID);
+
 	// Socket used for listening for new clients 
 	SOCKET listenSocket = INVALID_SOCKET;
+
 	// Sockets used for communication with client
+	
 	short lastIndex = 0;
+
 	// Variable used to store function return value
 	int iResult;
+
 	// Buffer used for storing incoming data
 	char dataBuffer[BUFFER_SIZE];
+
 	// WSADATA data structure that is to receive details of the Windows Sockets implementation
 	WSADATA wsaData;
+
 	// Initialize windows sockets library for this process
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
+		//return 1;
 		return;
 	}
+
 	// Initialize serverAddress structure used by bind
 	sockaddr_in serverAddress;
 	memset((char*)&serverAddress, 0, sizeof(serverAddress));
@@ -38,6 +47,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 
 	//initialise all client_socket[] to 0 so not checked
 	memset(clientSocketsProcess, 0, MAX_CLIENTS * sizeof(SOCKET));
+
 	// Create a SOCKET for connecting to server
 	listenSocket = socket(AF_INET,      // IPv4 address family
 		SOCK_STREAM,  // Stream socket
@@ -48,6 +58,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 	{
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		WSACleanup();
+		//return 1;
 		return;
 	}
 
@@ -60,6 +71,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 		printf("bind failed with error: %d\n", WSAGetLastError());
 		closesocket(listenSocket);
 		WSACleanup();
+		//return 1;
 		return;
 	}
 
@@ -83,6 +95,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 		printf("listen failed with error: %d\n", WSAGetLastError());
 		closesocket(listenSocket);
 		WSACleanup();
+		//return 1;
 		return;
 	}
 
@@ -121,6 +134,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 			printf("Select failed with error: %d\n", WSAGetLastError());
 			closesocket(listenSocket);
 			WSACleanup();
+			//return 0;
 			return;
 		}
 		else if (selectResult == 0) // timeout expired
@@ -165,6 +179,9 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
+				char args[8];
+				//memset(args, (int)&cc, 4);
+				//memset(args+4, (int)storingBuffer, 4);
 
 				hListenForRegistrationsThread[threadNum] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &threadArgs[lastIndex], 0, &ListenForRegistrationsThreadID[threadNum]);
 				threadNum++;
@@ -174,23 +191,25 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 	}
 	for (int i = 0;i < threadNum;i++)
 		CloseHandle(hListenForRegistrationsThread[i]);
-	//Close listen and accepted sockets
 	closesocket(listenSocket);
 
-	// Deinitialize WSA library
 	WSACleanup();
 }
 
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 {
+	//SOCKET clientSocket = (*(clientConnection*)lpParams).clientSocket;
+	//sockaddr_in clientAddr = (*(clientConnection*)(lpParams)).clientAddr;
 	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
+	//int socket= (*(ThreadArgs*)(lpParams)).clientSocket;
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
 	RingBuffer* storingBuffer= (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs= (*(ThreadArgs*)(lpParams)).cs;
+	// Sockets used for communication with client
 
-	bool flag = false; //idikator koji govori da li se u niti desila registracija, ako jeste onda idemo na else dolje
-	char* message_; //za cuvanje poruka
+	bool flag = false;
+	char* message_;
 	struct process newProcess;
 	short processId;
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
@@ -209,17 +228,19 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 			if (iResult > 0)
 			{
 				dataBuffer[iResult] = '\0';
+				//printf("Message received from client:\n");
 				message_ = dataBuffer;
 				processId = *((short*)(message_));
 				processId = ntohs(processId);
 				newProcess.id = processId;
 				newMessage.processId = newProcess.id;
 				strcpy(newMessage.text, "REGISTRATION");
-				ringBufPutMessage(storingBuffer,cs, newMessage);//dodavanje nove poruke u kruzni bafer
+				ringBufPutMessage(storingBuffer,cs, newMessage);//dodavanje nove poruke
+
 				printf("Registration message %d \n", newProcess.id);
 				flag = true;
 				printf("_______________________________  \n");
-				int newPort = RegisterService(newProcess); //cuvanje procesovih podataka u neku mapu
+				int newPort = RegisterService(newProcess); //cuvanje 
 				if (iResult == SOCKET_ERROR)
 				{
 					printf("send failed with error: %d\n", WSAGetLastError());
@@ -238,7 +259,9 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 			}
 			else
 			{
-				//Sleep(100);
+				// there was an error during recv
+				//printf("recv failed with error: %d RECIVING ID\n", WSAGetLastError());
+				//closesocket(clientSocket);
 			}
 		}
 		else
@@ -250,8 +273,12 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				printf("Message received from client.\n");
 				strcpy(newMessage.text, dataBuffer);
 				newMessage.processId = processId;
-				if (strcmp(newMessage.text, "get_data_from_replica") == 0) { //ako je poruka za dobavljanje kopije podatak	
-					printf("Process with id %d requested retrieving data.\n", processId);//ubacujemo u bafer i cekamo svoj podatak u povratnom baferu
+			/*	printf("Poruka: %s \n", newMessage.text);
+				printf("ProcessId: %d\n", newMessage.processId);*/
+				if (strcmp(newMessage.text, "get_data_from_replica") == 0) {
+
+					
+					printf("Process with id %d requested retrieving data.\n", processId);
 					ringBufPutMessage(storingBuffer,cs, newMessage);
 					printBuffer(storingBuffer,cs);
 					while (1)
@@ -295,9 +322,14 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
 				//closesocket(clientSocket);
 			}
+			//Close listen and accepted sockets
+			//closesocket(listenSocket);
+
 		}
-		closesocket(clientSocket);
+		
+
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+
 }
