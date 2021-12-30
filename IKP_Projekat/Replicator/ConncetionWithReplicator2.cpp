@@ -273,8 +273,8 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	{
 		char dataBuffer[BUFFER_SIZE];
 		//printBuffer(storingBuffer,cs);
-		//m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
-		m.processId = -1;//<<<<<<<<<<<<<<
+		m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
+		//m.processId = -1;//<<<<<<<<<<<<<<
 		if (m.processId == -1)
 		{
 			Sleep(3000);

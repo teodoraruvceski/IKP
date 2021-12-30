@@ -1,7 +1,9 @@
 #include "Replica.h"
 
 
-int main() {
+int main(int argc, char* argv[]) {
+	int pId = (int)argv[2];//id procesa <<<<<<<<<<<<<<<<<<provjeriti
+
 	int count = 0;
 	listItem* head;
 	init_list(&head);
@@ -44,6 +46,18 @@ int main() {
 		WSACleanup();
 		return -1;
 	}
+	//m.processId = ... doraditi id iz argumenata
+	m.processId = pId;
+	iResult = send(connectSocket, (char*)&m, (short)sizeof(struct message), 0);
+	// Check result of send function
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(connectSocket);
+		WSACleanup();
+		return -1;
+	}
+	printf("Hello message with your id successfully sent. Total bytes: %ld\n", iResult);
 
 	while (1)
 	{

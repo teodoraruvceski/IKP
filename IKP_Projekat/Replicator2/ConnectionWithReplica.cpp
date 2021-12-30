@@ -95,7 +95,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 		return;
 	}
 
-	printf("Server socket is set to listening mode. Waiting for new connection requests.\n");
+	printf("Replicator2 socket is set to listening mode. Waiting for new Replica connection requests.\n");
 
 	// set of socket descriptors
 	fd_set readfds;
@@ -137,7 +137,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 		{
 			if (_kbhit()) //check if some key is pressed
 			{
-				getch();
+				_getch();
 				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
 			}
 			continue;
@@ -196,100 +196,94 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
-	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer; //mora li reciving buffer
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	// Sockets used for communication with client
-
+	int pId=-1; //tu cuvamo id replice koja se javila
 	bool flag = false;
 	short processId;
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
 	printf("New client request accepted . Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 	message m;
-
+	char dataBuffer[BUFFER_SIZE];
+	int iResult;
+	bool ind = false;
+	
 	while (1)
 	{
-		char dataBuffer[BUFFER_SIZE];
-		int iResult;
-		while (1)
-		{
-			m = ringBufReadMessage(storingBuffer, cs);
+		if (ind == false) {
+			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+			if (iResult > 0)
+			{
+				dataBuffer[iResult] = '\0';
+				m = *(message*)dataBuffer;
+				pId = m.processId;
+				printf("Replica %d saying hello.\n",pId);
+			}
+			else if (iResult == 0)
+			{
+				Sleep(10);
+			}
+			else
+			{
+				//there was an error during recv
+				printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+				closesocket(clientSocket);
+			}
 		}
-
-		//iResult = send(connectSocket, (char*)&retrievedData, (short)sizeof(struct retrievedData), 0);
-		//// Check result of send function
-		//if (iResult == SOCKET_ERROR)
-		//{
-		//	printf("send failed with error: %d\n", WSAGetLastError());
-		//	closesocket(connectSocket);
-		//	WSACleanup();
-		//	return -1;
-		//}
-		//printf("Message with retrieved data successfully sent. Total bytes: %ld\n", iResult);
-		
-			//iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-			////printf("iRESULT: %d", iResult);
-			//if (iResult > 0)
-			//{
-			//	dataBuffer[iResult] = '\0';
-			//	printf("Message received from client.\n");
-			//	strcpy(newMessage.text, dataBuffer);
-			//	newMessage.processId = processId;
-			//	if (strcmp(newMessage.text, "get_data_from_replica") == 0) {
-
-
-			//		printf("Process with id %d requested retrieving data.\n", processId);
-			//		printf("\nBUFFER PRIJE UBACIVANJA U REP1:\n");
-			//		printBuffer(storingBuffer, cs);
-
-			//		ringBufPutMessage(storingBuffer, cs, newMessage);
-			//		printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
-			//		printBuffer(storingBuffer, cs);
-
-			//		while (1)
-			//		{
-			//			retrievedData data = ringBufReadRetrievedData(retrievingBuffer, cs);
-			//			if (data.processId == newMessage.processId)
-			//			{
-			//				data = ringBufGetRetrievedData(retrievingBuffer, cs);
-			//				iResult = send(clientSocket, (char*)&data, (short)sizeof(struct retrievedData), 0);
-			//				// Check result of send function
-			//				if (iResult == SOCKET_ERROR)
-			//				{
-			//					printf("send failed with error in sending to REP2: %d\n", WSAGetLastError());
-			//					//closesocket(connectSocket);
-			//					//WSACleanup();
-			//					//break;
-			//				}
-			//				printf("Sent data to process.");
-			//				break;
-			//			}
-			//		}
-			//	}
-			//	else {
-			//		printf("\nData: %s  ProcessId: %d\n", newMessage.text, newMessage.processId);
-			//		printf("\nBUFFER PRIJE UBACIVANJA U REP1:\n");
-			//		printBuffer(storingBuffer, cs);
-
-			//		ringBufPutMessage(storingBuffer, cs, newMessage);
-			//		printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
-			//		printBuffer(storingBuffer, cs);
-			//	}
-			//}
-			//else if (iResult == 0)
-			//{
-			//	// connection was closed gracefully
-			//	//printf("Connection with client closed.\n");
-			//	//closesocket(clientSocket);
-			//}
-			//else
-			//{
-			//	//there was an error during recv
-			//	//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
-			//	//closesocket(clientSocket);
-			//}
-			////Close listen and accepted sockets
-			////closesocket(listenSocket);
-
+		else {
+			m = ringBufReadMessage(storingBuffer, cs);
+			if (m.processId == -1 && m.processId != pId)
+			{
+				Sleep(1000);
+				continue;
+			}
+			m = ringBufGetMessage(storingBuffer, cs);
+			if (strcmp(m.text, "get_data_from_replica") == 0) {
+				iResult = send(clientSocket, (char*)&m, (short)sizeof(struct message), 0);
+				// Check result of send function
+				if (iResult == SOCKET_ERROR)
+				{
+					printf("send failed with error: %d\n", WSAGetLastError());
+					closesocket(clientSocket);
+					WSACleanup();
+					return -1;
+				}
+				printf("Message with data: %s for replica successfully sent. Total bytes: %ld\n", m.text, iResult);
+				//cekanje povratnih podataka
+				iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+				if (iResult > 0)
+				{
+					dataBuffer[iResult] = '\0';
+					m = *(message*)dataBuffer;//provjeriti povratni tip podataka nisam podesavao
+					struct retrievedData data;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<doraditit
+					ringBufPutRetrievedData(retrievingBuffer,cs,data);
+					printf("Replica %d retrieved data for process.\n", pId);
+				}
+				else if (iResult == 0)
+				{
+					Sleep(10);
+				}
+				else
+				{
+					//there was an error during recv
+					printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+					closesocket(clientSocket);
+				}
+			}
+			else {
+				iResult = send(clientSocket, (char*)&m, (short)sizeof(struct message), 0);
+				// Check result of send function
+				if (iResult == SOCKET_ERROR)
+				{
+					printf("send failed with error: %d\n", WSAGetLastError());
+					closesocket(clientSocket);
+					WSACleanup();
+					return -1;
+				}
+				printf("Message with data: %s for replica successfully sent. Total bytes: %ld\n", m.text, iResult);
+			}
+		}
 	}
 	// Deinitialize WSA library
 	WSACleanup();

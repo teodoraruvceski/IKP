@@ -1,19 +1,5 @@
-﻿  ConncetionWithReplicator1.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(23,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(197,10): warning C4101: 'wsaData2': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(256,8): warning C4101: 'message': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(257,17): warning C4101: 'newProcess': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(312,8): warning C4101: 'dataBuffer': unreferenced local variable
-  ConnectionWithReplica.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(24,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(178,10): warning C4101: 'args': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(204,8): warning C4101: 'processId': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(212,7): warning C4101: 'iResult': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(211,8): warning C4101: 'dataBuffer': unreferenced local variable
-  main.cpp
-  RingBuffer.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(60,32): warning C4018: '<': signed/unsigned mismatch
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(112,32): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(347): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
-  Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator2.exe
+﻿  ConnectionWithReplica.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(24,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(178,10): warning C4101: 'args': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(238,28): error C2059: syntax error: ')'
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(239,3): error C2143: syntax error: missing ';' before '{'
