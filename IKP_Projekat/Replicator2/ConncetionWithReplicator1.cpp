@@ -260,6 +260,9 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	{
 		char dataBuffer[BUFFER_SIZE];
 		int iResult;
+		char verb[7] = "runas\0";
+		char location[53] = "D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\0";
+		char id[4];
 		
 		iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
 		if (iResult > 0)
@@ -268,8 +271,17 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 			printf("Message received from client\n");
 			struct message* message2 = (struct message*)dataBuffer;
 			if (strcmp(message2->text, "REGISTRATION") == 0) {
+				itoa(message2->processId, id, 2);
 				printf("Recieved REGISTRATION message from REP1.\n");
 				//code for creating NEW INSTANCE <3
+				ShellExecuteA(
+					GetDesktopWindow(),
+					"open",
+					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
+					id,
+					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug",
+					SW_SHOWDEFAULT
+				);
 			}
 			else {
 				printf("Recieved message from REP1, and stored in storingBuffer.\n");

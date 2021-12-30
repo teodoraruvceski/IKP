@@ -2,8 +2,8 @@
 
 
 int main(int argc, char* argv[]) {
-	int pId = (int)argv[2];//id procesa <<<<<<<<<<<<<<<<<<provjeriti
-
+	int pId = atoi((char*)argv[1]);//id procesa <<<<<<<<<<<<<<<<<<provjeriti
+	printf("I AM ALIVEEEEEEEEE\n");
 	int count = 0;
 	listItem* head;
 	init_list(&head);
@@ -89,12 +89,8 @@ int main(int argc, char* argv[]) {
 			}
 			else
 			{
-				//store message in storage
-				listItem item;
-				item.processId = m.processId;
-				strcpy(item.text, m.text);
-				item.next = NULL;
-				add_to_list(&item, &head,&count);
+				listItem* item = create_new_item(m.text, m.processId);
+				add_to_list(item, &head,&count);
 			}
 		}
 		else if (iResult == 0)

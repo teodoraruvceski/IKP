@@ -200,18 +200,18 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	// Sockets used for communication with client
 	int pId=-1; //tu cuvamo id replice koja se javila
-	bool flag = false;
 	short processId;
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
 	printf("New client request accepted . Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 	message m;
+	retrievedData data;
 	char dataBuffer[BUFFER_SIZE];
 	int iResult;
-	bool ind = false;
+	bool flag = false;
 	
 	while (1)
 	{
-		if (ind == false) {
+		if (flag == false) {
 			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
 			if (iResult > 0)
 			{
@@ -219,10 +219,11 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 				m = *(message*)dataBuffer;
 				pId = m.processId;
 				printf("Replica %d saying hello.\n",pId);
+				flag = true;
 			}
 			else if (iResult == 0)
 			{
-				Sleep(10);
+				//Sleep(10);
 			}
 			else
 			{
@@ -233,7 +234,7 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 		}
 		else {
 			m = ringBufReadMessage(storingBuffer, cs);
-			if (m.processId == -1 && m.processId != pId)
+			if (m.processId == -1 || m.processId != pId)
 			{
 				Sleep(1000);
 				continue;
@@ -255,8 +256,7 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 				if (iResult > 0)
 				{
 					dataBuffer[iResult] = '\0';
-					m = *(message*)dataBuffer;//provjeriti povratni tip podataka nisam podesavao
-					struct retrievedData data;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<doraditit
+					data = *(retrievedData*)dataBuffer;//provjeriti povratni tip podataka nisam podesavao
 					ringBufPutRetrievedData(retrievingBuffer,cs,data);
 					printf("Replica %d retrieved data for process.\n", pId);
 				}

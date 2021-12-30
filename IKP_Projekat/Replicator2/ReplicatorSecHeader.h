@@ -9,6 +9,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "conio.h"
+#include <shlobj.h>
+#include <shlwapi.h>
+#include <objbase.h>
+#include <shellapi.h>
 
 #include <iostream> 
 #include "RingBuffer.h"
