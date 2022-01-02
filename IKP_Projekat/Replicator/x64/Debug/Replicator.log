@@ -1,6 +1,18 @@
 ﻿  ConncetionWithReplicator2.cpp
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(25,7): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(274,8): warning C4101: 'dataBuffer': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(313,6): warning C4101: 'iResult': unreferenced local variable
-C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(321,8): warning C4101: 'message': unreferenced local variable
-  Replicator.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Replicator.exe
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(268,8): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(308,6): warning C4101: 'iResult': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(316,8): warning C4101: 'message': unreferenced local variable
+  ConnectionWithService.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(28,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(182,10): warning C4101: 'args': unreferenced local variable
+  main.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(40,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(39,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
+  Map.cpp
+  ReplicatorFunctions.cpp
+  RingBuffer.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(57,37): warning C4018: '<': signed/unsigned mismatch
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(106,40): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Replicator.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator.exe

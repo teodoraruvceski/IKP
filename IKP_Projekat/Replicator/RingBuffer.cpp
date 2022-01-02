@@ -1,52 +1,47 @@
 #include "ReplicatorPrimHeader.h"
-//extern RingBuffer* storingBuffer;
-//extern RingBufferRetrieved* retrievingBuffer;
-//extern CRITICAL_SECTION cs;
 
-struct message ringBufGetMessage(RingBuffer* storingBuffer,CRITICAL_SECTION* cs) {
+
+struct message ringBufGetMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	message ret;
-	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(cs);
-	if (apBuffer->count==0)
+	if (storingBuffer->count == 0)
 	{
 		ret.processId = -1;
 	}
 	else
 	{
 		int index;
-		index = apBuffer->head;
-		apBuffer->head = (apBuffer->head + 1) % RING_SIZE;
-		ret = apBuffer->data[index];
-		apBuffer->count = apBuffer->count - 1;
+		index = storingBuffer->head;
+		storingBuffer->head = (storingBuffer->head + 1) % RING_SIZE;
+		ret = storingBuffer->data[index];
+		storingBuffer->count = storingBuffer->count - 1;
 	}
 	LeaveCriticalSection(cs);
 	return ret;
 }
 struct message ringBufReadMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	message ret;
-	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(cs);
-	if (apBuffer->count == 0)
+	if (storingBuffer->count == 0)
 	{
 		ret.processId = -1;
 	}
 	else
 	{
-		int index = apBuffer->head;
-		ret = apBuffer->data[index];
+		int index = storingBuffer->head;
+		ret = storingBuffer->data[index];
 	}
 	LeaveCriticalSection(cs);
 	return ret;
 }
-bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs,struct message m) {
-	RingBuffer* apBuffer = storingBuffer;
+bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message m) {
 	EnterCriticalSection(cs);
 	bool ret;
-	if (apBuffer->count<BUFFER_SIZE)
+	if (storingBuffer->count < BUFFER_SIZE)
 	{
-		apBuffer->data[apBuffer->tail] = m;
-		apBuffer->tail = (apBuffer->tail + 1) % RING_SIZE;
-		apBuffer->count = apBuffer->count + 1;
+		storingBuffer->data[storingBuffer->tail] = m;
+		storingBuffer->tail = (storingBuffer->tail + 1) % RING_SIZE;
+		storingBuffer->count = storingBuffer->count + 1;
 		ret = true;
 	}
 	else
@@ -58,10 +53,9 @@ bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs,struct me
 }
 
 void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
-	RingBuffer* apBuffer = storingBuffer;
 	EnterCriticalSection(cs);
-	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
-		printf("Message: %s, ProcessId: %d.\n", apBuffer->data[i].text, apBuffer->data[i].processId);
+	for (int i = storingBuffer->head;i < storingBuffer->tail;i++) {
+		printf("Message: %s, ProcessId: %d.\n", storingBuffer->data[i].text, storingBuffer->data[i].processId);
 	}
 	LeaveCriticalSection(cs);
 }
@@ -70,64 +64,60 @@ void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	retrievedData ret;
-	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(cs);
-	if (apBuffer->count==0)
+	if (retrievingBuffer->count == 0)
 	{
 		ret.processId = -1;
 	}
 	else
 	{
 		int index;
-		index = apBuffer->head;
-		apBuffer->head = (apBuffer->head + 1) % RING_SIZE;
-		ret = apBuffer->data[index];
-		apBuffer->count = apBuffer->count - 1;
+		index = retrievingBuffer->head;
+		retrievingBuffer->head = (retrievingBuffer->head + 1) % RING_SIZE;
+		ret = retrievingBuffer->data[index];
+		retrievingBuffer->count = retrievingBuffer->count - 1;
 	}
 	LeaveCriticalSection(cs);
 	return ret;
-	
+
 }
-bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,struct retrievedData d)
+bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, struct retrievedData d)
 {
 	bool ret;
-	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(cs);
-	if (apBuffer->count==BUFFER_SIZE)
+	if (retrievingBuffer->count == BUFFER_SIZE)
 	{
 		ret = false;
 	}
 	else
 	{
-		apBuffer->data[apBuffer->tail] = d;
-		apBuffer->tail = (apBuffer->tail + 1) % RING_SIZE;
-		apBuffer->count = apBuffer->count + 1;
+		retrievingBuffer->data[retrievingBuffer->tail] = d;
+		retrievingBuffer->tail = (retrievingBuffer->tail + 1) % RING_SIZE;
+		retrievingBuffer->count = retrievingBuffer->count + 1;
 		ret = true;
 	}
-	
+
 	LeaveCriticalSection(cs);
 	return true;
 }
 void printBufferRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
-	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	EnterCriticalSection(cs);
-	for (int i = apBuffer->head;i < apBuffer->tail;i++) {
-		printf("ProcessId: %d.\nData:\n", apBuffer->data[i].processId);
-		for (int j = 0;j < apBuffer->data[i].dataCount;j++)
+	for (int i = retrievingBuffer->head;i < retrievingBuffer->tail;i++) {
+		printf("ProcessId: %d.\nData:\n", retrievingBuffer->data[i].processId);
+		for (int j = 0;j < retrievingBuffer->data[i].dataCount;j++)
 		{
-			printf("%s\n", apBuffer->data[i].data[j]);
+			printf("%s\n", retrievingBuffer->data[i].data[j]);
 		}
 	}
 	LeaveCriticalSection(cs);
 }
 struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
-	RingBufferRetrieved* apBuffer = retrievingBuffer;
 	retrievedData ret;
 	EnterCriticalSection(cs);
-	int index = apBuffer->head;
-	ret= apBuffer->data[index];
+	int index = retrievingBuffer->head;
+	ret = retrievingBuffer->data[index];
 	LeaveCriticalSection(cs);
 	return ret;
 }

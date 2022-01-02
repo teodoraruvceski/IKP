@@ -39,7 +39,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 	memset((char*)&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;				// IPv4 address family
 	serverAddress.sin_addr.s_addr = INADDR_ANY;		// Use all available addresses
-	serverAddress.sin_port = htons(SERVER_PORT);	// Use specific port
+	serverAddress.sin_port = htons(REPLICA_LISTEN_PORT);	// Use specific port
 
 	//initialise all client_socket[] to 0 so not checked
 	memset(clientSocketsReplica, 0, MAX_CLIENTS * sizeof(SOCKET));
@@ -135,11 +135,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 		}
 		else if (selectResult == 0) // timeout expired
 		{
-			if (_kbhit()) //check if some key is pressed
-			{
-				_getch();
-				printf("Primena racunarskih mreza u infrstrukturnim sistemima 2019/2020\n");
-			}
+			//printf("Timeout expired\n");
 			continue;
 		}
 		else if (FD_ISSET(listenSocket, &readfds))
@@ -170,6 +166,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 					printf("ioctlsocket failed with error.");
 					continue;
 				}
+				printf("Accepted replica connection!\n");
 				threadArgs[lastIndex].clientAddr = clientAddr; //mpoguca greska da se prepise nove=a preko stare strukture
 				threadArgs[lastIndex].clientSocket = clientSocketsReplica[lastIndex];
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
@@ -196,14 +193,15 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
 	sockaddr_in clientAddr = (*(ThreadArgs*)(lpParams)).clientAddr;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
-	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer; //mora li reciving buffer
+	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	// Sockets used for communication with client
-	int pId=-1; //tu cuvamo id replice koja se javila
+	short pId=-1; //tu cuvamo id replice koja se javila
 	short processId;
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
 	printf("New client request accepted . Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 	message m;
+	message* pointer;
 	retrievedData data;
 	char dataBuffer[BUFFER_SIZE];
 	int iResult;
@@ -212,12 +210,13 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 	while (1)
 	{
 		if (flag == false) {
+			printf("Waiting for replica to say Hi...\n");
 			iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
 			if (iResult > 0)
 			{
 				dataBuffer[iResult] = '\0';
-				m = *(message*)dataBuffer;
-				pId = m.processId;
+				pointer = (message*)dataBuffer;
+				pId = ntohs(pointer->processId);
 				printf("Replica %d saying hello.\n",pId);
 				flag = true;
 			}
@@ -229,7 +228,8 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 			{
 				//there was an error during recv
 				printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
-				closesocket(clientSocket);
+				Sleep(3000);
+				//closesocket(clientSocket);
 			}
 		}
 		else {

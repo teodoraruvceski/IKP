@@ -19,7 +19,7 @@ int main()
 
 	RingBuffer storingBuffer;
 	RingBufferRetrieved retrievingBuffer;
-	static CRITICAL_SECTION cs;
+	 CRITICAL_SECTION cs;
 	InitializeCriticalSection(&cs);
 	//RingBuffer storingBuffer;
 	//RingBufferRetrieved retrievingBuffer;

@@ -4,7 +4,7 @@
 int main()
 {
 	SOCKET clientSocketsReplica[NUMOF_THREADS];
-	CRITICAL_SECTION cs;
+	 CRITICAL_SECTION cs;
 	InitializeCriticalSection(&cs);
 	RingBuffer storingBuffer;
 	RingBufferRetrieved retrievingBuffer;

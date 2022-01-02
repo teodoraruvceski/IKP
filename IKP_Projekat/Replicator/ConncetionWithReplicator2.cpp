@@ -1,12 +1,6 @@
 #include "ReplicatorPrimHeader.h"
 
 
-
-//extern RingBuffer* storingBuffer;
-//extern RingBufferRetrieved* retrievingBuffer;
-//extern CRITICAL_SECTION cs;
-
-
 void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSockets, SOCKET* connectSocket) {
 
 	// Socket used to communicate with server
@@ -275,12 +269,13 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 		//printBuffer(storingBuffer,cs);
 		m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
 		//m.processId = -1;//<<<<<<<<<<<<<<
+		printf("Checking for messages to send...\n");
 		if (m.processId == -1)
 		{
-			Sleep(3000);
+			Sleep(5000);
 			continue;
 		}
-		printf("Checking for messages to send...\n");
+		
 		iResult = send(connectSocket, (char*)&m, (short)sizeof(struct message), 0);
 		// Check result of send function
 		if (iResult == SOCKET_ERROR)

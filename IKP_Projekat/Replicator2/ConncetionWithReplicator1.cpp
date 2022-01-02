@@ -234,13 +234,14 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 
 		numOfConnected++;
 	}
-	for (int i = 0;i < threadNum;i++)
-		CloseHandle(hListenForReplicator1Thread[i]);
-	//Close listen and accepted sockets
-	closesocket(listenSocket);
+	//for (int i = 0;i < threadNum;i++)
+	//	CloseHandle(hListenForReplicator1Thread[i]);
+	////Close listen and accepted sockets
+	//closesocket(listenSocket);
 
-	// Deinitialize WSA library
-	WSACleanup();
+	//// Deinitialize WSA library
+	//WSACleanup();
+	printf("Pokrenute sve niti za komunikaciju sa replikatorom 1.\n Im out!\n");
 }
 
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
@@ -274,13 +275,21 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 				itoa(message2->processId, id, 2);
 				printf("Recieved REGISTRATION message from REP1.\n");
 				//code for creating NEW INSTANCE <3
-				ShellExecuteA(
+				/*ShellExecuteA(
 					GetDesktopWindow(),
 					"open",
 					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
 					id,
 					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug",
 					SW_SHOWDEFAULT
+				);*/
+				ShellExecuteA(
+					NULL,
+					NULL,
+					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
+					id,
+					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat",
+					SW_SHOWNORMAL
 				);
 			}
 			else {
