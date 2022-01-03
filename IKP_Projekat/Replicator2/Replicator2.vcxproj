@@ -146,6 +146,7 @@
     <ClCompile Include="ConncetionWithReplicator1.cpp" />
     <ClCompile Include="ConnectionWithReplica.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ReplicaArray.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

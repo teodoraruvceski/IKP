@@ -2,7 +2,7 @@
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
 
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2)
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2, int replics[])
 {
 	//clientConnection clientConnections[NUMOF_THREADS];
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
@@ -171,6 +171,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 				threadArgs[lastIndex].storingBuffer = storingBuffer;
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
+				threadArgs[lastIndex].replics = replics;
 				hListenForReplicator1Thread[threadNum] = CreateThread(NULL, 0, &ListenForReplicator1Thread, &threadArgs[lastIndex], 0, &ListenForReplicator1ThreadID[threadNum]);
 				threadNum++;
 				lastIndex++;
@@ -253,6 +254,7 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
+	int* replics = (*(ThreadArgs*)(lpParams)).replics;
 	// Sockets used for communication with client
 	
 	char* message;
@@ -275,6 +277,28 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 			if (strcmp(message2->text, "REGISTRATION") == 0) {
 				itoa((int)(message2->processId), id, 10);
 				printf("Recieved REGISTRATION message from REP1.\n");
+				if (TryAddReplica(replics, message2->processId)==true) {
+					SHELLEXECUTEINFO ExecuteInfo;
+					LPCWSTR mode = L"open";
+					LPCWSTR params = (LPCWSTR)id;
+					memset(&ExecuteInfo, 0, sizeof(ExecuteInfo));
+
+					ExecuteInfo.cbSize = sizeof(ExecuteInfo);
+					ExecuteInfo.fMask = 0;
+					ExecuteInfo.hwnd = 0;
+					ExecuteInfo.lpVerb = mode;                      // Operation to perform
+					//ExecuteInfo.lpFile = L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe"; //"c:\\windows\\notepad.exe";  // Application name
+					ExecuteInfo.lpFile = L"C:\\Users\\Nebojsa\\Desktop\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe";					ExecuteInfo.lpParameters = params;           // Additional parameters
+					ExecuteInfo.lpDirectory = 0;                           // Default directory
+					ExecuteInfo.nShow = SW_SHOWNORMAL;
+					ExecuteInfo.hInstApp = 0;
+
+					ShellExecuteEx(&ExecuteInfo);
+					printf("Replica created.\n");
+				}
+				else {
+					printf("Replica already exist.");
+				}
 				//code for creating NEW INSTANCE <3
 				/*ShellExecuteA(
 					GetDesktopWindow(),
@@ -310,22 +334,7 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 				//Wow64DisableWow64FsRedirection(&OldValue);
 				//ShellExecute(NULL, L"open",L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",NULL, id, SW_RESTORE);
 
-				SHELLEXECUTEINFO ExecuteInfo;
-				LPCWSTR mode = L"open";
-				LPCWSTR params = (LPCWSTR)id;
-				memset(&ExecuteInfo, 0, sizeof(ExecuteInfo));
-
-				ExecuteInfo.cbSize = sizeof(ExecuteInfo);
-				ExecuteInfo.fMask = 0;
-				ExecuteInfo.hwnd = 0;
-				ExecuteInfo.lpVerb = mode;                      // Operation to perform
-				ExecuteInfo.lpFile = L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe"; //"c:\\windows\\notepad.exe";  // Application name
-				ExecuteInfo.lpParameters = params;           // Additional parameters
-				ExecuteInfo.lpDirectory = 0;                           // Default directory
-				ExecuteInfo.nShow = SW_SHOWNORMAL;
-				ExecuteInfo.hInstApp = 0;
-
-				ShellExecuteEx(&ExecuteInfo);
+				
 			}
 			else {
 				printf("Recieved message from REP1, and stored in storingBuffer.\n");

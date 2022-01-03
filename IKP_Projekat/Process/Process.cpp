@@ -78,8 +78,10 @@ void RegisterService() {
 		return;
 	}
 	short serviceId;
-	printf("Unesite id procesa: ");
-	scanf_s("%d", &serviceId);
+	do{
+		printf("Unesite id procesa(id mora biti veci od 0): ");
+		scanf("%d", &serviceId);
+	} while (serviceId <= 0);
 	serviceId =htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
 	//getchar();    //pokupiti enter karakter iz bafera tastature
 	// Slanje pripremljene poruke zapisane unutar strukture studentInfo

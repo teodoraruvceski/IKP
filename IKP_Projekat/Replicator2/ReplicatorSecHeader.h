@@ -46,6 +46,7 @@ struct ThreadArgs {
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
     CRITICAL_SECTION* cs;
+    int *replics;
 };
 
 struct process {
@@ -59,12 +60,14 @@ struct clientConnection {
     sockaddr_in clientAddr;
 };
 
-//DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2);
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2,int replics[]);
 void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSocketsReplica);
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);
 DWORD WINAPI SendToReplica(LPVOID lpParams);
+
+void InitReplicaArray(int array[]);
+bool TryAddReplica(int array[], int id);
 
 bool RegisterService(struct process);
 

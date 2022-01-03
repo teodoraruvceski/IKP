@@ -3,8 +3,10 @@
 
 int main()
 {
+	int replics[MAX_CLIENTS];
+	InitReplicaArray(replics);//niz koji cuva sve id replika stavljamo na -1;
 	SOCKET clientSocketsReplica[NUMOF_THREADS];
-	 CRITICAL_SECTION cs;
+	CRITICAL_SECTION cs;
 	InitializeCriticalSection(&cs);
 	RingBuffer storingBuffer;
 	RingBufferRetrieved retrievingBuffer;
@@ -18,7 +20,7 @@ int main()
 	storingBuffer.tail = 0;
 	storingBuffer.count = 0;
 
-	ListenForReplicator1Registrations(&storingBuffer,&retrievingBuffer,&cs,threadArgs2);
+	ListenForReplicator1Registrations(&storingBuffer,&retrievingBuffer,&cs,threadArgs2,replics);
 	ListenForReplica(&storingBuffer, &retrievingBuffer, &cs, clientSocketsReplica);
 	_getch();
 	return 0;
