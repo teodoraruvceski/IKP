@@ -13,6 +13,7 @@
 #include <shlwapi.h>
 #include <objbase.h>
 #include <shellapi.h>
+#include <process.h>
 
 #include <iostream> 
 #include "RingBuffer.h"
@@ -59,7 +60,7 @@ struct clientConnection {
 };
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs);
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2);
 void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSocketsReplica);
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);

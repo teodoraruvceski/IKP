@@ -2,7 +2,7 @@
 
 //DWORD WINAPI ListenForRegistrations(LPVOID lpParams)
 
-void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs)
+void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs, ThreadArgs* threadArgs2)
 {
 	//clientConnection clientConnections[NUMOF_THREADS];
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS];
@@ -183,7 +183,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 	DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING];
 	HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING];
 	SOCKET connectSocket[NUMOF_THREADS_SENDING];
-	ThreadArgs threadArgs2[NUMOF_THREADS_SENDING];
+	
 	printf("Konektovanje na rep1 \n");
 	for (int i = 0;i < NUMOF_THREADS_SENDING;i++) {
 		connectSocket[i] = INVALID_SOCKET;
@@ -241,6 +241,7 @@ void ListenForReplicator1Registrations(RingBuffer* storingBuffer,RingBufferRetri
 
 	//// Deinitialize WSA library
 	//WSACleanup();
+	Sleep(5000);
 	printf("Pokrenute sve niti za komunikaciju sa replikatorom 1.\n Im out!\n");
 }
 
@@ -256,7 +257,7 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	
 	char* message;
 	struct process newProcess;
-
+	
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
@@ -272,7 +273,7 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 			printf("Message received from client\n");
 			struct message* message2 = (struct message*)dataBuffer;
 			if (strcmp(message2->text, "REGISTRATION") == 0) {
-				itoa(message2->processId, id, 2);
+				itoa((int)(message2->processId), id, 10);
 				printf("Recieved REGISTRATION message from REP1.\n");
 				//code for creating NEW INSTANCE <3
 				/*ShellExecuteA(
@@ -283,14 +284,48 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug",
 					SW_SHOWDEFAULT
 				);*/
-				ShellExecuteA(
+
+				/*ShellExecuteA(
 					NULL,
 					NULL,
 					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
 					id,
 					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat",
 					SW_SHOWNORMAL
-				);
+				);*/
+
+				/*char* my_args[3];
+				char name[] = "D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe";
+				my_args[0] = name;
+				my_args[1] = id;
+				my_args[2] = NULL;
+				spawnl(P_WAIT, "Replica.exe", name,(char*)(message2->processId),NULL);*/
+
+				/*char child2[50];
+				strcpy(child2, "Replica.exe ");
+				strcat(child2, id);
+				system(child2);*/
+
+				//PVOID OldValue = nullptr;
+				//Wow64DisableWow64FsRedirection(&OldValue);
+				//ShellExecute(NULL, L"open",L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",NULL, id, SW_RESTORE);
+
+				SHELLEXECUTEINFO ExecuteInfo;
+				LPCWSTR mode = L"open";
+				LPCWSTR params = (LPCWSTR)id;
+				memset(&ExecuteInfo, 0, sizeof(ExecuteInfo));
+
+				ExecuteInfo.cbSize = sizeof(ExecuteInfo);
+				ExecuteInfo.fMask = 0;
+				ExecuteInfo.hwnd = 0;
+				ExecuteInfo.lpVerb = mode;                      // Operation to perform
+				ExecuteInfo.lpFile = L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe"; //"c:\\windows\\notepad.exe";  // Application name
+				ExecuteInfo.lpParameters = params;           // Additional parameters
+				ExecuteInfo.lpDirectory = 0;                           // Default directory
+				ExecuteInfo.nShow = SW_SHOWNORMAL;
+				ExecuteInfo.hInstApp = 0;
+
+				ShellExecuteEx(&ExecuteInfo);
 			}
 			else {
 				printf("Recieved message from REP1, and stored in storingBuffer.\n");
@@ -320,34 +355,35 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 }
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	int iResult;
-	message m;
+	retrievedData m;
 	printf("Nit konektovana na replicator1 kao klijent.\n");
 	SOCKET connectSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
-	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
-	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
+	RingBuffer* storingBuffer = ((ThreadArgs*)(lpParams))->storingBuffer;
+	RingBufferRetrieved* retrievingBuffer = ((ThreadArgs*)(lpParams))->retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
-	Sleep(3000);
-	_getch();
+	Sleep(10000);
+	//_getch();
 	while (1)
 	{
 		char dataBuffer[BUFFER_SIZE];
-		m = ringBufGetMessage(storingBuffer,cs);
+		m = ringBufGetRetrievedData(retrievingBuffer, cs);
 		if (m.processId == -1)
 		{
 			Sleep(3000);
 			continue;
 		}
-		printf("Cheking for messages to send...\n");
-		iResult = send(connectSocket, (char*)&m, (short)sizeof(message), 0);
+		
+		printf("Checking for messages to send...\n");
+		iResult = send(connectSocket, (char*)&m, (short)sizeof(retrievedData), 0);
 		// Check result of send function
 		if (iResult == SOCKET_ERROR)
 		{
 			printf("send failed with error: %d\n", WSAGetLastError());
-			closesocket(connectSocket);
-			WSACleanup();
+			//closesocket(connectSocket);
+			//WSACleanup();
 			break;
 		}
-		printf("Sent data to replicator2.");
+		printf("Sent data to replicator1.\n");
 	}
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);

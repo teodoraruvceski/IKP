@@ -1,1 +1,5 @@
-﻿  Replica.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Replica.exe
+﻿  List.cpp
+  main.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\main.cpp(89,26): warning C4101: 'data': unreferenced local variable
+  Generating Code...
+  Replica.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replica.exe

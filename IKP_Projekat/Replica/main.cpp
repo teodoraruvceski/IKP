@@ -2,14 +2,13 @@
 
 
 int main(int argc, char* argv[]) {
-	//int pId = atoi(argv[1]);//id procesa <<<<<<<<<<<<<<<
-	short pId = 1;
-	printf("Id: \n");
+	short pId = atoi(argv[1]);//id procesa <<<<<<<<<<<<<<<
+	//short pId = 1;
+	printf("Id: %d\n",pId);
 	
 	int count = 0;
 	listItem* head;
 	init_list(&head);
-	printf("I AM ALIVEEEEEEEEE\n");
 	// Socket used to communicate with server
 	SOCKET connectSocket = INVALID_SOCKET;
 	// Variable used to store function return value
@@ -85,14 +84,22 @@ int main(int argc, char* argv[]) {
 			{
 				//retrieve data from storage
 				printf("Retrieving.\n");
-				struct retrievedData retrievedData = retrieve(&head, &count);
-				printf("ProcessId: %d\n", retrievedData.processId);
-				if (retrievedData.processId == -1)
+				struct retrievedData data;
+				struct retrievedData *retrievedData = retrieve(&head, &count);
+				printf("ProcessId: %d\n", retrievedData->processId);
+				printf("DataCount: %d\n", retrievedData->dataCount);
+
+				if (retrievedData->processId == -1)
 				{
-					retrievedData.processId = m.processId;
+					retrievedData->processId = m.processId;
 				}
-				
-				iResult = send(connectSocket, (char*)&retrievedData, (short)sizeof(struct retrievedData), 0);
+				printf("Data:\n");
+				for (int i = 0;i < retrievedData->dataCount;i++)
+				{
+					printf("Text: %s\n", retrievedData->data[i]);
+				}
+				retrievedData->dataCount = htons(retrievedData->dataCount);
+				iResult = send(connectSocket, (char*)retrievedData, (short)sizeof(struct retrievedData), 0);
 				// Check result of send function
 				if (iResult == SOCKET_ERROR)
 				{
@@ -106,6 +113,7 @@ int main(int argc, char* argv[]) {
 			else
 			{
 				listItem* item = create_new_item(m.text, m.processId);
+				printf("Dodavanje -> text: %s, id: %d\n", item->text, item->processId);
 				add_to_list(item, &head,&count);
 			}
 		}

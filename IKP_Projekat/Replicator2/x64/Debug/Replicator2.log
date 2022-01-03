@@ -1,5 +1,21 @@
-﻿  ConnectionWithReplica.cpp
+﻿  ConncetionWithReplicator1.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(23,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(197,10): warning C4101: 'wsaData2': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(266,23): warning C4129: 'F': unrecognized character escape sequence
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(266,23): warning C4129: 'i': unrecognized character escape sequence
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(266,23): warning C4129: 'I': unrecognized character escape sequence
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(266,23): warning C4129: 'R': unrecognized character escape sequence
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(258,8): warning C4101: 'message': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(259,17): warning C4101: 'newProcess': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(368,8): warning C4101: 'dataBuffer': unreferenced local variable
+  ConnectionWithReplica.cpp
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(24,7): warning C4101: 'dataBuffer': unreferenced local variable
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(175,10): warning C4101: 'args': unreferenced local variable
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(200,8): warning C4101: 'processId': unreferenced local variable
+  main.cpp
+  RingBuffer.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(56,37): warning C4018: '<': signed/unsigned mismatch
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(105,40): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(404): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
   Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator2.exe

@@ -63,7 +63,7 @@ void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	retrievedData ret;
-	EnterCriticalSection(cs);
+	//EnterCriticalSection(cs);
 	if (retrievingBuffer->count == 0)
 	{
 		ret.processId = -1;
@@ -76,14 +76,14 @@ struct retrievedData ringBufGetRetrievedData(RingBufferRetrieved* retrievingBuff
 		ret = retrievingBuffer->data[index];
 		retrievingBuffer->count = retrievingBuffer->count - 1;
 	}
-	LeaveCriticalSection(cs);
+	//LeaveCriticalSection(cs);
 	return ret;
 
 }
 bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, struct retrievedData d)
 {
 	bool ret;
-	EnterCriticalSection(cs);
+	//EnterCriticalSection(cs);
 	if (retrievingBuffer->count == BUFFER_SIZE)
 	{
 		ret = false;
@@ -96,12 +96,12 @@ bool ringBufPutRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SEC
 		ret = true;
 	}
 
-	LeaveCriticalSection(cs);
+	//LeaveCriticalSection(cs);
 	return true;
 }
 void printBufferRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
-	EnterCriticalSection(cs);
+	//EnterCriticalSection(cs);
 	for (int i = retrievingBuffer->head;i < retrievingBuffer->tail;i++) {
 		printf("ProcessId: %d.\nData:\n", retrievingBuffer->data[i].processId);
 		for (int j = 0;j < retrievingBuffer->data[i].dataCount;j++)
@@ -109,14 +109,14 @@ void printBufferRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SE
 			printf("%s\n", retrievingBuffer->data[i].data[j]);
 		}
 	}
-	LeaveCriticalSection(cs);
+	//LeaveCriticalSection(cs);
 }
 struct retrievedData ringBufReadRetrievedData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs)
 {
 	retrievedData ret;
-	EnterCriticalSection(cs);
+	//EnterCriticalSection(cs);
 	int index = retrievingBuffer->head;
 	ret = retrievingBuffer->data[index];
-	LeaveCriticalSection(cs);
+	//LeaveCriticalSection(cs);
 	return ret;
 }

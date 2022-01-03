@@ -1,7 +1,5 @@
-﻿  main.cpp
-  Process.cpp
+﻿  Process.cpp
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(82,10): warning C4477: 'scanf_s' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(82,10): message : consider using '%hd' in the format string
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(100,7): warning C4101: 'option': unreferenced local variable
-  Generating Code...
   Process.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Process.exe

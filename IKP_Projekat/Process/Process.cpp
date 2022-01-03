@@ -122,7 +122,14 @@ void RegisterService() {
 			dataBuffer[iResult] = '\0';
 			printf("Process received from server: ");
 			char* message = dataBuffer;
-			printf("OVDJE ISPISATI PODATKE KOJE JE VRATIO REPLICATOR");
+			retrievedData data = *(retrievedData*)(message);
+			data.dataCount = ntohs(data.dataCount);
+			printf("Retrieved data:\n");
+			for (int i = 0;i < data.dataCount;i++)
+			{
+				printf("%s\n", *(data.data));
+				data.data++;
+			}
 		}
 		else if(strcmp(messageForRepl.text, "turn_off")==0){
 			closesocket(connectSocket);

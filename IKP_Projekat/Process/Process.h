@@ -26,6 +26,11 @@ struct process {
     int port;
     int id;
 };
+struct retrievedData {
+    char** data;
+    short processId;
+    int dataCount;
+};
 
 struct message {
     char text[MESSAGE_LEN];

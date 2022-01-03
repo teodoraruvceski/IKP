@@ -275,13 +275,13 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 				if (strcmp(newMessage.text, "get_data_from_replica") == 0) {
 
 					
-					printf("Process with id %d requested retrieving data.\n", processId);
+					/*printf("Process with id %d requested retrieving data.\n", processId);
 					printf("\nBUFFER PRIJE UBACIVANJA U REP1:\n");
-					printBuffer(storingBuffer, cs);
+					printBuffer(storingBuffer, cs);*/
 
 					ringBufPutMessage(storingBuffer,cs, newMessage);
-					printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
-					printBuffer(storingBuffer,cs);
+					/*printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
+					printBuffer(storingBuffer,cs);*/
 
 					while (1)
 					{
@@ -301,16 +301,20 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 							printf("Sent data to process.");
 							break;
 						}
+						else
+						{
+							Sleep(3000);
+						}
 					}
 				}
 				else {
 					printf("\nData: %s  ProcessId: %d\n", newMessage.text, newMessage.processId);
-					printf("\nBUFFER PRIJE UBACIVANJA U REP1:\n");
-					printBuffer(storingBuffer, cs);
+					/*printf("\nBUFFER PRIJE UBACIVANJA U REP1:\n");
+					printBuffer(storingBuffer, cs);*/
 
 					ringBufPutMessage(storingBuffer, cs, newMessage);
-					printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
-					printBuffer(storingBuffer, cs);
+					/*printf("\nBUFFER POSLIJE UBACIVANJA U REP1:\n");
+					printBuffer(storingBuffer, cs);*/
 				}
 			}
 			else if (iResult == 0)

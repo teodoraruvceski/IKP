@@ -252,24 +252,31 @@ DWORD WINAPI SendToReplica(LPVOID lpParams)
 				}
 				printf("Message with data: %s for replica successfully sent. Total bytes: %ld\n", m.text, iResult);
 				//cekanje povratnih podataka
-				iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
-				if (iResult > 0)
+				while (1)
 				{
-					dataBuffer[iResult] = '\0';
-					data = *(retrievedData*)dataBuffer;//provjeriti povratni tip podataka nisam podesavao
-					ringBufPutRetrievedData(retrievingBuffer,cs,data);
-					printf("Replica %d retrieved data for process.\n", pId);
+					iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+					if (iResult > 0)
+					{
+						dataBuffer[iResult] = '\0';
+						data = *(retrievedData*)dataBuffer;//provjeriti povratni tip podataka nisam podesavao
+						printf("count: %d\n", ntohs(data.dataCount));
+						ringBufPutRetrievedData(retrievingBuffer, cs, data);
+						printf("Replica %d retrieved data for process.\n", pId);
+						break;
+					}
+					else if (iResult == 0)
+					{
+						Sleep(1000);
+					}
+					else
+					{
+						//there was an error during recv
+						//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+						//closesocket(clientSocket);
+						Sleep(1000);
+					}
 				}
-				else if (iResult == 0)
-				{
-					Sleep(10);
-				}
-				else
-				{
-					//there was an error during recv
-					printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
-					closesocket(clientSocket);
-				}
+				
 			}
 			else {
 				iResult = send(clientSocket, (char*)&m, (short)sizeof(struct message), 0);

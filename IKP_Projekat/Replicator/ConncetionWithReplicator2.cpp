@@ -95,7 +95,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 	memset((char*)&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;				// IPv4 address family
 	serverAddress.sin_addr.s_addr = INADDR_ANY;		// Use all available addresses
-	serverAddress.sin_port = htons(SERVER_PORT2_2);	// Use specific port
+	serverAddress.sin_port = htons(PORT_RCV_RET_DATA);	// Use specific port
 
 	//initialise all client_socket[] to 0 so not checked
 	memset(clientSockets, 0, NUMOF_THREADS_RECV * sizeof(SOCKET));
@@ -248,6 +248,7 @@ void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* ret
 
 	// Deinitialize WSA library
 	//WSACleanup();
+	Sleep(5000);
 }
 
 
@@ -267,8 +268,7 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	{
 		char dataBuffer[BUFFER_SIZE];
 		//printBuffer(storingBuffer,cs);
-		m = ringBufGetMessage(storingBuffer,cs);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<OVDJE I DOLJE DA MI GRESKU NE JAVLJA
-		//m.processId = -1;//<<<<<<<<<<<<<<
+		m = ringBufGetMessage(storingBuffer,cs);
 		printf("Checking for messages to send...\n");
 		if (m.processId == -1)
 		{
@@ -307,6 +307,7 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	retrievedData m;
+	printf("Nit za prijem retrievedData pokrenuta...\n");
 	//SOCKET clientSocket = *(*(ThreadArgs*)(lpParams)).clientSocket;
 	SOCKET socket= (*(ThreadArgs*)(lpParams)).clientSocket;
 	RingBuffer* storingBuffer = (*(ThreadArgs*)(lpParams)).storingBuffer;
@@ -319,23 +320,25 @@ DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams) {
 		char dataBuffer[BUFFER_SIZE];
 		int iResult;
 		
-		
+		printf("Waiting for Retrieved data...\n");
 		iResult = recv(socket, dataBuffer, BUFFER_SIZE, 0);
 		if (iResult > 0)
 		{
 			dataBuffer[iResult] = '\0';
 			m = *(retrievedData*)(dataBuffer);
-			printf("Message received from client.\n");
+			printf("Message received from rep2.\n");
 			ringBufPutRetrievedData(retrievingBuffer,cs,m); //zakomentarisao sam buffer da bi mogo pokrenuti niti
 		}
 		else if (iResult == 0)
 		{
 			// connection was closed gracefully
 			printf("Connection with client closed.\n");
+			Sleep(3000);
 			//closesocket(clientSocket);
 		}
 		else
 		{
+			Sleep(3000);
 			//there was an error during recv
 			//printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
 			//closesocket(clientSocket);
