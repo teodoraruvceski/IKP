@@ -105,7 +105,6 @@ void RegisterService() {
 		Menu(&messageForRepl);
 		messageForRepl.serviceId = serviceId;
 
-		printf("SEND: %d : %s", messageForRepl.serviceId,messageForRepl.text);
 		//printf("ID... id %d", messageForRepl.serviceId);
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
 			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(message), 0);
@@ -117,18 +116,22 @@ void RegisterService() {
 				WSACleanup();
 				return;
 			}
-			printf("Process waititng respons from replicator.");
+			printf("Process waititng respons from replicator.\n");
 			iResult = recv(connectSocket, dataBuffer, BUFFER_SIZE, 0);
 			dataBuffer[iResult] = '\0';
-			printf("Process received from server: ");
+			printf("Process received from server: \n");
 			char* message = dataBuffer;
 			retrievedData data = *(retrievedData*)(message);
 			data.dataCount = ntohs(data.dataCount);
 			printf("Retrieved data:\n");
-			for (int i = 0;i < data.dataCount;i++)
+			printf("%s\n", data.data);
+			char delim[] = "\n";
+			char* ptr = strtok(data.data, delim);
+			printf("Data:\n");
+			while(ptr!=NULL)
 			{
-				printf("%s\n", *(data.data));
-				data.data++;
+				 printf("%s\n", ptr);
+				 ptr= strtok(NULL, delim);
 			}
 		}
 		else if(strcmp(messageForRepl.text, "turn_off")==0){

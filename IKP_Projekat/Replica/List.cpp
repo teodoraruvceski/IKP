@@ -29,10 +29,10 @@ listItem* create_new_item(char text[],  short id) {
     return m;
 }
 
-struct retrievedData *retrieve(listItem** head,int *count)
+struct retrievedData* retrieve(listItem** head,int *count)
 {
     //struct retrievedData* ret=malloc(sizeof(struct retrievedData));
-    struct retrievedData ret = { (char**)malloc(2048 * sizeof(char*)),0,0};
+    struct retrievedData ret=*(retrievedData*)malloc(sizeof(struct retrievedData));
     if (*head == NULL)
     {
         ret.processId = -1;
@@ -41,12 +41,16 @@ struct retrievedData *retrieve(listItem** head,int *count)
     }
     ret.processId = (*head)->processId;
     ret.dataCount = *count;
-   /* for (int i = 0;i < *count;i++)
+    printf("DataCount:%d\n", ret.dataCount);
+    strcpy(ret.data, "");
+    for (int i = 0;i < *count;i++)
     {
-        ret.data[i] = (*head)->text;
-        printf("Text: %s\n", ret.data[i]);
+        strcat(ret.data, (*head)->text);
+        strcat(ret.data, "\n");
+        printf("Text: %s\n", ret.data);
         *head = (*head)->next;
-    }*/
+        
+    }
     return &ret;
 }
 

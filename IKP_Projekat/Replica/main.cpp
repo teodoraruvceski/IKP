@@ -58,7 +58,6 @@ int main(int argc, char* argv[]) {
 		//}
 	
 	
-	printf("HTONS:%d\n", htons(pId));
 	m.processId = htons(pId);
 	iResult = send(connectSocket, (char*)&m, (int)sizeof(struct message), 0);
 	// Check result of send function
@@ -85,25 +84,31 @@ int main(int argc, char* argv[]) {
 				//retrieve data from storage
 				printf("Retrieving.\n");
 				struct retrievedData data;
-				struct retrievedData *retrievedData = retrieve(&head, &count);
-				printf("ProcessId: %d\n", retrievedData->processId);
-				printf("DataCount: %d\n", retrievedData->dataCount);
+				struct retrievedData retrievedData = *retrieve(&head, &count);
+				printf("ProcessId: %d\n", retrievedData.processId);
+				printf("DataCount: %d\n", retrievedData.dataCount);
 
-				if (retrievedData->processId == -1)
+				if (retrievedData.processId == -1)
 				{
-					retrievedData->processId = m.processId;
+					retrievedData.processId = m.processId;
 				}
 				printf("Data:\n");
-				for (int i = 0;i < retrievedData->dataCount;i++)
+				printf("%s\n", retrievedData.data);
+				/*char delim[] = "\n";
+				char* ptr = strtok(retrievedData.data, delim);
+				for (int i = 0;i < retrievedData.dataCount;i++)
 				{
-					printf("Text: %s\n", retrievedData->data[i]);
-				}
-				retrievedData->dataCount = htons(retrievedData->dataCount);
-				iResult = send(connectSocket, (char*)retrievedData, (short)sizeof(struct retrievedData), 0);
-				// Check result of send function
+					printf("%s\n", *(ptr));
+					ptr++;
+				}*/
+				retrievedData.dataCount = htons(retrievedData.dataCount);
+				iResult = send(connectSocket, (char*)&retrievedData, (short)sizeof(struct retrievedData), 0);
+				 //Check result of send function
 				if (iResult == SOCKET_ERROR)
 				{
+					
 					printf("send failed with error: %d\n", WSAGetLastError());
+					Sleep(3000);
 					/*closesocket(connectSocket);
 					WSACleanup();
 					return -1;*/

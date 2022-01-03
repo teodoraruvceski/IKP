@@ -13,6 +13,7 @@ int main()
 	retrievingBuffer.tail = 0;
 	retrievingBuffer.count = 0;
 
+
 	storingBuffer.head = 0;
 	storingBuffer.tail = 0;
 	storingBuffer.count = 0;

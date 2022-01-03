@@ -11,7 +11,7 @@ struct message {
 };
 
 struct retrievedData {
-	char** data;
+	char data[TEXT_SIZE];
 	short processId;
 	int dataCount;
 };

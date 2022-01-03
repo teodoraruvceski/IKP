@@ -16,6 +16,8 @@ D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithRe
   RingBuffer.cpp
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(56,37): warning C4018: '<': signed/unsigned mismatch
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(105,40): warning C4018: '<': signed/unsigned mismatch
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(109,11): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\RingBuffer.cpp(109,11): warning C4313: 'printf': '%s' in format string conflicts with argument 1 of type 'int'
   Generating Code...
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(404): warning C4715: 'SendToReplicator1Thread': not all control paths return a value
   Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator2.exe

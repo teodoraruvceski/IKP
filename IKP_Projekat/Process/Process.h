@@ -27,7 +27,7 @@ struct process {
     int id;
 };
 struct retrievedData {
-    char** data;
+    char data[2048];
     short processId;
     int dataCount;
 };
