@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "d6aa722b-d8c9-4254-be6a-71c18aad98cc": {
+      "ProjectGuid": "d6aa722b-d8c9-4254-be6a-71c18aad98cc",
+      "DisplayName": "Replica",
+      "ColorIndex": 0
+    },
+    "27d37422-ec37-4c43-8590-2e176633b640": {
+      "ProjectGuid": "27d37422-ec37-4c43-8590-2e176633b640",
+      "DisplayName": "Replicator2",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

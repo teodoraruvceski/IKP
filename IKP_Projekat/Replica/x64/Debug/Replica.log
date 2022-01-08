@@ -1,5 +1,7 @@
 ﻿  List.cpp
   main.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\main.cpp(89,26): warning C4101: 'data': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\main.cpp(88,26): warning C4101: 'data': unreferenced local variable
   Generating Code...
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\List.cpp(40): warning C4172: returning address of local variable or temporary: ret
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\List.cpp(54): warning C4172: returning address of local variable or temporary: ret
   Replica.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replica.exe

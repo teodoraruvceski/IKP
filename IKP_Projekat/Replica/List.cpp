@@ -33,23 +33,22 @@ struct retrievedData* retrieve(listItem** head,int *count)
 {
     //struct retrievedData* ret=malloc(sizeof(struct retrievedData));
     struct retrievedData ret=*(retrievedData*)malloc(sizeof(struct retrievedData));
-    listItem** pom = head;
     if (*head == NULL)
     {
         ret.processId = -1;
         ret.dataCount = 0;
         return &ret;
     }
-    ret.processId = (*pom)->processId;
+    ret.processId = (*head)->processId;
     ret.dataCount = *count;
     printf("DataCount:%d\n", ret.dataCount);
     strcpy(ret.data, "");
     for (int i = 0;i < *count;i++)
     {
-        strcat(ret.data, (*pom)->text);
+        strcat(ret.data, (*head)->text);
         strcat(ret.data, "\n");
         printf("Text: %s\n", ret.data);
-        *pom = (*pom)->next;
+        *head = (*head)->next;
         
     }
     return &ret;

@@ -278,6 +278,10 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 				itoa((int)(message2->processId), id, 10);
 				printf("Recieved REGISTRATION message from REP1.\n");
 				if (TryAddReplica(replics, message2->processId)==true) {
+					/*printf("---------------------------%d\n", message2->processId);
+					printf("---------------------------%d\n", (int)message2->processId);
+					printf("---------------------------%s\n", id);
+					printf("---------------------------%s\n", (LPCWSTR)id);*/
 					SHELLEXECUTEINFO ExecuteInfo;
 					LPCWSTR mode = L"open";
 					LPCWSTR params = (LPCWSTR)id;
@@ -287,8 +291,9 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 					ExecuteInfo.fMask = 0;
 					ExecuteInfo.hwnd = 0;
 					ExecuteInfo.lpVerb = mode;                      // Operation to perform
-					//ExecuteInfo.lpFile = L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe"; //"c:\\windows\\notepad.exe";  // Application name
-					ExecuteInfo.lpFile = L"C:\\Users\\Nebojsa\\Desktop\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe";					ExecuteInfo.lpParameters = params;           // Additional parameters
+					ExecuteInfo.lpFile = L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe"; //"c:\\windows\\notepad.exe";  // Application name
+					//ExecuteInfo.lpFile = L"C:\\Users\\Nebojsa\\Desktop\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe";
+					ExecuteInfo.lpParameters = params;           // Additional parameters
 					ExecuteInfo.lpDirectory = 0;                           // Default directory
 					ExecuteInfo.nShow = SW_SHOWNORMAL;
 					ExecuteInfo.hInstApp = 0;
@@ -299,41 +304,6 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 				else {
 					printf("Replica already exist.");
 				}
-				//code for creating NEW INSTANCE <3
-				/*ShellExecuteA(
-					GetDesktopWindow(),
-					"open",
-					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
-					id,
-					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug",
-					SW_SHOWDEFAULT
-				);*/
-
-				/*ShellExecuteA(
-					NULL,
-					NULL,
-					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",
-					id,
-					"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat",
-					SW_SHOWNORMAL
-				);*/
-
-				/*char* my_args[3];
-				char name[] = "D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe";
-				my_args[0] = name;
-				my_args[1] = id;
-				my_args[2] = NULL;
-				spawnl(P_WAIT, "Replica.exe", name,(char*)(message2->processId),NULL);*/
-
-				/*char child2[50];
-				strcpy(child2, "Replica.exe ");
-				strcat(child2, id);
-				system(child2);*/
-
-				//PVOID OldValue = nullptr;
-				//Wow64DisableWow64FsRedirection(&OldValue);
-				//ShellExecute(NULL, L"open",L"D:\\tea\\Fax\\4.godina\\1.semestar\\ikp\\IKP\\IKP_Projekat\\x64\\Debug\\Replica.exe",NULL, id, SW_RESTORE);
-
 				
 			}
 			else {

@@ -2,6 +2,7 @@
 
 
 int main(int argc, char* argv[]) {
+	printf("%s\n", argv[1]);
 	short pId = atoi(argv[1]);//id procesa <<<<<<<<<<<<<<<
 	//short pId = 1;
 	printf("Id: %d\n",pId);
@@ -81,10 +82,11 @@ int main(int argc, char* argv[]) {
 			printf("Message: %s\n", m.text);
 			if (strcmp(m.text, "get_data_from_replica") == 0)
 			{
+				listItem* pom = head;
 				//retrieve data from storage
 				printf("Retrieving.\n");
 				struct retrievedData data;
-				struct retrievedData retrievedData = *retrieve(&head, &count);
+				struct retrievedData retrievedData = *retrieve(&pom, &count);
 				printf("ProcessId: %d\n", retrievedData.processId);
 				printf("DataCount: %d\n", retrievedData.dataCount);
 
