@@ -1,7 +1,6 @@
-﻿  main.cpp
-  Process.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(83,9): warning C4477: 'scanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(83,9): message : consider using '%hd' in the format string
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(102,7): warning C4101: 'option': unreferenced local variable
-  Generating Code...
-  Process.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Process.exe
+﻿  Process.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(118,9): warning C4477: 'scanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(118,9): message : consider using '%hd' in the format string
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(82,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Process\Process.cpp(134,7): warning C4101: 'option': unreferenced local variable
+  Process.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Process.exe

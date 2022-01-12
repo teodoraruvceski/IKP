@@ -10,7 +10,6 @@
 #include <ws2tcpip.h>
 #include "conio.h"
 #include <iostream> 
-#include "Map.h"
 #include "RingBuffer.h"
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
@@ -18,22 +17,13 @@
 #pragma warning(disable:4996) 
 #pragma pack(1)
 
-#define SERVER_IP_ADDRESS "127.0.0.1"
-#define SERVER_PORT 27016 /// port replikatora1 na koj i se konektuju procesi
-#define SERVER_PORT2 27017   /// port replikatora2 naoji se konektuje replikator1
-#define PORT_RCV_RET_DATA 27018/// port replikatora1 na koji se konektuju niti replikatora2 koje salju retrievedData
-#define MAX_CLIENTS 10
+#define SERVER_IP_ADDRESS "127.0.0.1" //localhost
+#define SERVER_PORT 27016        /// replicator1 port for processes
+#define SERVER_PORT2 27017       /// replicator2 port for 3 threads connection from replicator1
+#define PORT_RCV_RET_DATA 27018  /// replicator1 port for 3 threads connections from replicator2
+#define MAX_CLIENTS 2
 #define NUMOF_THREADS_SENDING 3
 #define NUMOF_THREADS_RECV 3
-
-
-struct port {
-    int val;
-    bool ind;
-};
-
-static struct port ports[MAX_CLIENTS];
-
 
 struct process {
     char ipAddr[15];
@@ -41,30 +31,30 @@ struct process {
     int id;
 };
 
+//struct for passing data to thread(thread function)
 struct ThreadArgs{
     SOCKET clientSocket;
     sockaddr_in clientAddr;
     RingBuffer* storingBuffer;
     RingBufferRetrieved* retrievingBuffer;
     CRITICAL_SECTION* cs;
+    CRITICAL_SECTION* cs2;
+    int id;
 };
-
-//DWORD WINAPI ListenForRegistrations(LPVOID lpParams);
-void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,SOCKET* clientSocketsProcess);
+//functions for connection with processes
+void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2,SOCKET* clientSocketsProcess);
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
+void RegisterProcess(SOCKET* clientSocket, bool* flag, short* processId, struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
+void MessageForStoring(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message* newMessage);
+void MessageForRetreivingData(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, struct message* newMessage, SOCKET* clientSocket);
 
-void ConncectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,SOCKET *clientSockets,SOCKET *connectSocket);
+//functions for connections with replicator2
+void ConnectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2,SOCKET *clientSockets,SOCKET *connectSocket);
+//sending to replicator2
 DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams);
-DWORD WINAPI ReccvFromReplicator2Thread(LPVOID lpParams);
-bool RegisterService(struct process);
-
-void SendData(int serviceId, void* data, int dataSize);
-
-void RecieveData(void* data, int dataSize);
-
-
-int FindEmptyPort();
-void InitializePorts();
-void FreePort(int port);
+void SendData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* connectSocket);
+//receiving from replicator2
+DWORD WINAPI ReceiveFromReplicator2Thread(LPVOID lpParams);
+void ReceiveData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs2, SOCKET* connectSocket);
 
 #endif

@@ -27,7 +27,7 @@ struct process {
     int id;
 };
 struct retrievedData {
-    char data[2048];
+    char data[BUFFER_SIZE];
     short processId;
     int dataCount;
 };
@@ -37,13 +37,10 @@ struct message {
     short serviceId;
 };
 
-void RegisterService();
-
-void SendData(int serviceId, void* data, int dataSize);
-
-void RecieveData(void* data, int dataSize);
-
-void Menu();
-//void StartProcess();
+//process functions
+void RegisterService(short* serviceId);
+void SendData(SOCKET* connectSocket, struct message* messageForRepl);
+void RecieveData(SOCKET* connectSocket, struct message* messageForRepl);
+void Menu(struct message* messageForRepl);
 
 #endif

@@ -40,12 +40,9 @@ struct retrievedData {
 struct ThreadArgs {
     int clientSocket;
     sockaddr_in clientAddr;
-    //RingBuffer* storingBuffer;
-   // RingBufferRetrieved* retrievingBuffer;
     CRITICAL_SECTION* cs;
 };
 
-void ListenForReplicator2();
-DWORD WINAPI ListenForReplicator2Thread(LPVOID lpParams);
-
+void ConnectToReplicator2(short id);
+void RetreiveData(SOCKET* connectSocket, struct listItem* head, int* count, struct message* m);
 #endif

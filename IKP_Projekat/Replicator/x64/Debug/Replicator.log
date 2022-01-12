@@ -1,20 +1,19 @@
-﻿  ConncetionWithReplicator2.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(269,8): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(308,6): warning C4101: 'iResult': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(317,8): warning C4101: 'message': unreferenced local variable
-  ConnectionWithService.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(28,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\ConnectionWithService.cpp(182,10): warning C4101: 'args': unreferenced local variable
-  main.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(40,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\main.cpp(39,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
-  Map.cpp
-  ReplicatorFunctions.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Replicator.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  ConncetionWithReplicator2.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(18,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(238,7): warning C4101: 'dataBuffer': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(308,16): warning C4101: 'm': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(307,6): warning C4101: 'iResult': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConncetionWithReplicator2.cpp(315,8): warning C4101: 'message': unreferenced local variable
+  ConnectionWithProcess.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\ConnectionWithProcess.cpp(28,7): warning C4101: 'dataBuffer': unreferenced local variable
   RingBuffer.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(57,37): warning C4018: '<': signed/unsigned mismatch
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(106,40): warning C4018: '<': signed/unsigned mismatch
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(110,11): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator\RingBuffer.cpp(110,11): warning C4313: 'printf': '%s' in format string conflicts with argument 1 of type 'int'
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(57,37): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(106,40): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(110,11): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\RingBuffer.cpp(110,11): warning C4313: 'printf': '%s' in format string conflicts with argument 1 of type 'int'
+  main.cpp
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\main.cpp(26,9): warning C4101: 'hListenForRegistrations': unreferenced local variable
+C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\Replicator\main.cpp(25,8): warning C4101: 'ListenForRegistrationsID': unreferenced local variable
   Generating Code...
-  Replicator.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator.exe
+  Replicator.vcxproj -> C:\Users\Nebojsa\Desktop\Ikp\IKP_Projekat\x64\Debug\Replicator1.exe

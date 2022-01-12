@@ -1,44 +1,79 @@
 #include "process.h"
 
+//menu for user. user can chose 3 options
 void Menu(struct message* messageForRepl) {
 	char option;
-	//char message[MESSAGE_LEN];
 	char* message = (char*)malloc(MESSAGE_LEN);
 	while (true) {	
-		printf("Odaberite opciju:\n");
+		printf("\nOdaberite opciju:\n");
 		printf("1. Posalji podatke.\n");
 		printf("2. Povuci podatke sa replike.\n");
 		printf("3. Ugasi proces.\n");
 		option = _getch();
 		switch (option) {
-			case '1':
-				printf("Unesite poruku: ");
-				scanf("%s", message); ////OVO OVDE JE KOD SASE TACKA 3 SA GRESKOM ALI JA SE SECAM DA OVAJ SCANF NIJE RADIO DOK NISI STAVIO TU DVOJKU
+			case '1':				
+				printf("Unesite poruku: \n");
+				scanf("%s", message); 				
 				strcpy(messageForRepl->text, message);
+				free(message);
 				return;
-				//return message;
 			case '2':
 				strcpy(messageForRepl->text, "get_data_from_replica");
-				//memcpy(message, "get_data_from_replica", strlen("get_data_from_replica"));
-				//return message;
+				free(message);
 				return;
 			case '3':
-				strcpy(messageForRepl->text, "get_data_from_replica");
-				//return message;
+				strcpy(messageForRepl->text, "turn_off");
+				free(message);
 				return;;
 			default:
-				printf("Pogresan unos opcije.");
+				printf("Pogresan unos opcije.\n");
 				break;			
 		}
 	}
-	//return message;
 }
-
-void SendData(int serviceId, void* data, int dataSize) {}
-
-void RecieveData(void* data, int dataSize) {}
-//TREBALO BI IZ DONJE POZIVATI FUNKCIJE GORE ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void RegisterService() {
+//function for sending data for storing at raplica
+void SendData(SOCKET* connectSocket, struct message* messageForRepl) {
+	int iResult = send(*connectSocket, (char*)messageForRepl, (int)sizeof(message), 0);
+	// Check result of send function
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(*connectSocket);
+		WSACleanup();
+		return;
+	}
+	printf("Message %s sucssesfuly sent to replicator.\n", messageForRepl->text);
+}
+//function for retreiving data from replica
+void RecieveData(SOCKET* connectSocket, struct message* messageForRepl) {
+	char dataBuffer[BUFFER_SIZE];
+	int iResult = send(*connectSocket, (char*)messageForRepl, (int)sizeof(message), 0);
+	// Check result of send function
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(*connectSocket);
+		WSACleanup();
+		return;
+	}
+	printf("Process waititng respons from replicator.\n");
+	iResult = recv(*connectSocket, dataBuffer, BUFFER_SIZE, 0);
+	dataBuffer[iResult] = '\0';
+	printf("Process received from replicator1: \n");
+	char* message = dataBuffer;
+	retrievedData data = *(retrievedData*)(message);
+	data.dataCount = ntohs(data.dataCount);
+	char delim[] = "\n";
+	char* ptr = strtok(data.data, delim);
+	printf("Data:\n");
+	while (ptr != NULL)
+	{
+		printf("%s\n", ptr);
+		ptr = strtok(NULL, delim);
+	}
+}
+//function for registration and calling process operations 
+void RegisterService(short *serviceId) {
 	// Socket used to communicate with server
 	SOCKET connectSocket = INVALID_SOCKET;
 	// Variable used to store function return value
@@ -77,17 +112,14 @@ void RegisterService() {
 		WSACleanup();
 		return;
 	}
-	short serviceId;
+	//short serviceId;
 	do{
-		printf("Unesite id procesa(id mora biti veci od 0): ");
-		scanf("%d", &serviceId);
-	} while (serviceId <= 0);
-	serviceId =htons(serviceId);  //obavezna funkcija htons() jer cemo slati podatak tipa short 
-	//getchar();    //pokupiti enter karakter iz bafera tastature
-	// Slanje pripremljene poruke zapisane unutar strukture studentInfo
-	//prosledjujemo adresu promenljive student u memoriji, jer se na toj adresi nalaze podaci koje saljemo
-	//kao i velicinu te strukture (jer je to duzina poruke u bajtima)
-	iResult = send(connectSocket, (char*)&serviceId, (short)sizeof(short), 0);
+		printf("\nUnesite id procesa(id mora biti veci od 0): ");
+		scanf("%d", serviceId);
+	} while (*serviceId <= 0);
+
+	*serviceId = htons(*serviceId);
+	iResult = send(connectSocket, (char*)serviceId, (short)sizeof(short), 0);
 	// Check result of send function
 	if (iResult == SOCKET_ERROR)
 	{
@@ -102,57 +134,19 @@ void RegisterService() {
 		int option;
 		struct message messageForRepl;
 
-		//char message[MESSAGE_LEN];
-		//strcpy(messageForRepl.text,Menu(&message));//Dobavljanje komande koju saljemo replicator1
+		//Menu for process
 		Menu(&messageForRepl);
-		messageForRepl.serviceId = serviceId;
+		messageForRepl.serviceId = *serviceId;
 
-		//printf("ID... id %d", messageForRepl.serviceId);
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
-			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(message), 0);
-			// Check result of send function
-			if (iResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(connectSocket);
-				WSACleanup();
-				return;
-			}
-			printf("Process waititng respons from replicator.\n");
-			iResult = recv(connectSocket, dataBuffer, BUFFER_SIZE, 0);
-			dataBuffer[iResult] = '\0';
-			printf("Process received from server: \n");
-			char* message = dataBuffer;
-			retrievedData data = *(retrievedData*)(message);
-			data.dataCount = ntohs(data.dataCount);
-			printf("Retrieved data:\n");
-			printf("%s\n", data.data);
-			char delim[] = "\n";
-			char* ptr = strtok(data.data, delim);
-			printf("Data:\n");
-			while(ptr!=NULL)
-			{
-				 printf("%s\n", ptr);
-				 ptr= strtok(NULL, delim);
-			}
+			RecieveData(&connectSocket, &messageForRepl);
 		}
 		else if(strcmp(messageForRepl.text, "turn_off")==0){
-			closesocket(connectSocket);
-			// Deinitialize WSA library
-			WSACleanup();
-			return;
+			
+			break;
 		}
 		else{
-			iResult = send(connectSocket, (char*)&messageForRepl, (int)sizeof(message), 0);
-			// Check result of send function
-			if (iResult == SOCKET_ERROR)
-			{
-				printf("send failed with error: %d\n", WSAGetLastError());
-				closesocket(connectSocket);
-				WSACleanup();
-				return;
-			}
-			printf("Message %s sucssesfuly sent to replicator. ID = %d",messageForRepl.text,messageForRepl.serviceId);
+			SendData(&connectSocket, &messageForRepl);
 		}		
 	}
 	// Shutdown the connection since we're done
@@ -165,7 +159,6 @@ void RegisterService() {
 		WSACleanup();
 		return;
 	}
-	Sleep(1000);
 	// Close connected socket
 	closesocket(connectSocket);
 	// Deinitialize WSA library
