@@ -1,14 +1,8 @@
-﻿  ConnectionWithReplica.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(21,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(181,10): warning C4101: 'args': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(239,9): warning C4477: 'printf' : format string '%ld' requires an argument of type 'long', but variadic argument 1 has type 'char *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(239,9): warning C4313: 'printf': '%d' in format string conflicts with argument 1 of type 'char *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(239,101): warning C4474: 'printf' : too many arguments passed for format string
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(239,101): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(323,12): warning C4477: 'printf' : format string '%ld' requires an argument of type 'long', but variadic argument 1 has type 'char *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(323,12): warning C4313: 'printf': '%d' in format string conflicts with argument 1 of type 'char *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(323,103): warning C4474: 'printf' : too many arguments passed for format string
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(323,103): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(294,6): warning C4101: 'iResult': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConnectionWithReplica.cpp(356): warning C4715: 'ConnectionWithReplicaThread': not all control paths return a value
+﻿  ConncetionWithReplicator1.cpp
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(19,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(187,10): warning C4101: 'wsaData2': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(275,6): warning C4101: 'iResult': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(285,8): warning C4101: 'message': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(286,17): warning C4101: 'newProcess': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replicator2\ConncetionWithReplicator1.cpp(300,7): warning C4101: 'dataBuffer': unreferenced local variable
   Replicator2.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replicator2.exe

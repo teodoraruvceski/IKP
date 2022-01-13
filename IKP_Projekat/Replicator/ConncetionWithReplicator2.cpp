@@ -326,6 +326,7 @@ DWORD WINAPI ReceiveFromReplicator2Thread(LPVOID lpParams) {
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+	closesocket(connectSocket);
 	printf("RECEIVING THREAD ENDED\n");
 	return 0;
 }

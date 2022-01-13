@@ -291,6 +291,7 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+	printf("NIT ZA PRIJEM GOTOVA\n");
 	return 0;
 }
 
@@ -303,8 +304,6 @@ void SendData(RingBufferRetrieved* retrievingBuffer, SOCKET* connectSocket, CRIT
 		Sleep(1000);
 		return;
 	}
-	printf("id:%d,text:%s\n", m.processId, m.data);
-	printf("Checking for messages to send...\n");
 	int iResult = send(*connectSocket, (char*)&m, (short)sizeof(retrievedData), 0);
 	// Check result of send function
 	if (iResult == SOCKET_ERROR)
@@ -328,23 +327,25 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	//_getch();
 	while (!(*end))
 	{
+		printf("end:%d\n", (*end));
 		SendData(retrievingBuffer,&connectSocket,cs2);
 	}
+	printf("NIT ZA SLANJE GOTOVA\n");
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);
 	// Check if connection is succesfully shut down.
 	if (iResult == SOCKET_ERROR)
 	{
-		printf("Nit za Prijem:Shutdown failed with error: %d\n", WSAGetLastError());
+		/*printf("Nit za Prijem:Shutdown failed with error: %d\n", WSAGetLastError());
 		closesocket(connectSocket);
 		WSACleanup();
-		return -1;
+		return -1;*/
 	}
 	Sleep(1000);
 	// Close connected socket
 	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("NIT ZA PRIJEM GOTOVA\n");
-
+	printf("NIT ZA SLANJE GOTOVA\n");
+	return 0;
 }
