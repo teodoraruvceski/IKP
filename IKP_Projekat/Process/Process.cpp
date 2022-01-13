@@ -1,5 +1,4 @@
-#include "process.h"
-
+#include "Process.h"
 //menu for user. user can chose 3 options
 void Menu(struct message* messageForRepl) {
 	char option;
@@ -45,7 +44,7 @@ void SendData(SOCKET* connectSocket, struct message* messageForRepl) {
 	printf("Message %s sucssesfuly sent to replicator.\n", messageForRepl->text);
 }
 //function for retreiving data from replica
-void RecieveData(SOCKET* connectSocket, struct message* messageForRepl) {
+void RecieveData(SOCKET* connectSocket, struct message* messageForRepl, struct listItem** head,int* count) {
 	char dataBuffer[BUFFER_SIZE];
 	int iResult = send(*connectSocket, (char*)messageForRepl, (int)sizeof(message), 0);
 	// Check result of send function
@@ -66,14 +65,26 @@ void RecieveData(SOCKET* connectSocket, struct message* messageForRepl) {
 	char delim[] = "\n";
 	char* ptr = strtok(data.data, delim);
 	printf("Data:\n");
+	if (*count > 0)
+	{
+		destroy_list(head);
+		*count = 0;
+	}
+	
 	while (ptr != NULL)
 	{
 		printf("%s\n", ptr);
+		add_to_list(create_new_item(ptr, data.processId),head,count);
 		ptr = strtok(NULL, delim);
 	}
 }
 //function for registration and calling process operations 
-void RegisterService(short *serviceId) {
+void RegisterService() {
+	short* serviceId = (short*)malloc(sizeof(short));
+	//list of data
+	listItem* head;
+	init_list(&head);
+	int dataCount=0;
 	// Socket used to communicate with server
 	SOCKET connectSocket = INVALID_SOCKET;
 	// Variable used to store function return value
@@ -116,7 +127,7 @@ void RegisterService(short *serviceId) {
 	do{
 		printf("\nUnesite id procesa(id mora biti veci od 0): ");
 		scanf("%d", serviceId);
-	} while (*serviceId <= 0);
+	} while (serviceId <= 0);
 
 	*serviceId = htons(*serviceId);
 	iResult = send(connectSocket, (char*)serviceId, (short)sizeof(short), 0);
@@ -139,16 +150,21 @@ void RegisterService(short *serviceId) {
 		messageForRepl.serviceId = *serviceId;
 
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
-			RecieveData(&connectSocket, &messageForRepl);
+			RecieveData(&connectSocket, &messageForRepl,&head,&dataCount);
 		}
 		else if(strcmp(messageForRepl.text, "turn_off")==0){
 			
 			break;
 		}
 		else{
+			listItem* newItem = create_new_item(messageForRepl.text,* serviceId);
+			add_to_list(newItem, &head, &dataCount);
+			dataCount++;
 			SendData(&connectSocket, &messageForRepl);
 		}		
 	}
+	destroy_list(&head);
+	//free(serviceId);
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);
 	// Check if connection is succesfully shut down.

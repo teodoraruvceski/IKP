@@ -3,11 +3,11 @@
 int main()
 {
 	//short* serviceId=(short*)malloc(sizeof(short));
-	short serviceId;
-	RegisterService(&serviceId);
+	//short serviceId;
+	RegisterService();
 	printf("Process sucssesfuly closed.\n");
 	printf("Press any key to close program . . .\n");
-	//free(serviceId);
-	_getch();
+	//free(&serviceId);
+	//_getch();
 	return 0;
 }

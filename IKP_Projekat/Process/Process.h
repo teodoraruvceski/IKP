@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "conio.h"
-
+#include "List.h"
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
@@ -38,9 +38,9 @@ struct message {
 };
 
 //process functions
-void RegisterService(short* serviceId);
+void RegisterService();
 void SendData(SOCKET* connectSocket, struct message* messageForRepl);
-void RecieveData(SOCKET* connectSocket, struct message* messageForRepl);
+void RecieveData(SOCKET* connectSocket, struct message* messageForRepl,struct listItem** head, int* count);
 void Menu(struct message* messageForRepl);
 
 #endif

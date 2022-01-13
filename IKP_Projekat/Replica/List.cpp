@@ -10,7 +10,7 @@ void add_to_list(listItem* m, listItem** head,int* count) {
         (*count)++;
         return;
     }
-
+    //printf("!!!!!! - %s\n", (*head)->text);
     add_to_list(m, &((*head)->next),count);
 }
 
@@ -37,6 +37,7 @@ struct retrievedData* retrieve(listItem** head,int *count)
     {
         ret.processId = -1;
         ret.dataCount = 0;
+        printf("List empty.");
         return &ret;
     }
     ret.processId = (*head)->processId;
@@ -49,7 +50,6 @@ struct retrievedData* retrieve(listItem** head,int *count)
         strcat(ret.data, "\n");
         printf("Text: %s\n", ret.data);
         *head = (*head)->next;
-        
     }
     return &ret;
 }
@@ -60,4 +60,15 @@ void destroy_list(listItem** head) {
         free(*head);
         *head = NULL;
     }
+}
+void print_list(listItem** head) {
+    listItem* pom = *head;
+    while (1) {
+        if (pom == NULL) { // list is empty
+            return;
+        }
+        printf("!!!!!!PRINT!!!! - %s\n", (*head)->text);
+    }
+   
+
 }

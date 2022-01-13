@@ -1,10 +1,8 @@
 #include "ReplicatorSecHeader.h"
 
-void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, SOCKET* clientSocketsReplica)
+void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, SOCKET* clientSocketsReplica,
+	DWORD ListenForReplicaThreadID[MAX_CLIENTS],HANDLE hListenForReplicaThread[MAX_CLIENTS], bool* end)
 {
-
-	DWORD ListenForReplicaThreadID[MAX_CLIENTS];
-	HANDLE hListenForReplicaThread[MAX_CLIENTS];
 	ThreadArgs threadArgs[MAX_CLIENTS];
 
 	int threadNum = 0;
@@ -107,6 +105,13 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 	//struct process newProcess;
 	while (true)
 	{
+		if (_kbhit())
+		{
+			printf("Press any key to end thread...\n");
+			(*end) = true;
+			_getch();
+			break;
+		}
 		// initialize socket set
 		FD_ZERO(&readfds);
 
@@ -171,6 +176,7 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 				threadArgs[lastIndex].retrievingBuffer = retrievingBuffer;
 				threadArgs[lastIndex].cs = cs;
 				threadArgs[lastIndex].cs2 = cs2;
+				threadArgs[lastIndex].end = end;
 
 				char args[8];
 
@@ -180,6 +186,16 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 			}
 		}
 	}
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		try {
+			closesocket(clientSocketsReplica[i]); //	pitanje : da li treba da se zatvaraju soketi od replica 
+		}
+		catch (...) {}
+		
+	}
+	closesocket(listenSocket);
+	WSACleanup();
+	printf("GLAVNA NIT GOTOVA\n");
 }
 
 void RegisterReplica(SOCKET* clientSocket, bool* flag, short* processId) {
@@ -228,6 +244,7 @@ void MessageForRetreivingData(SOCKET * clientSocket,struct message* mess, RingBu
 		{
 			dataBuffer[iResult] = '\0';
 			data = *(retrievedData*)dataBuffer;
+			printf("Replica sent : id=%d,text=%s\n", data.processId, data.data);
 			ringBufPutRetrievedData(retrievingBuffer, cs2, data);
 			printf("Replica %d retrieved data for process.\n", *processId);
 			break;
@@ -266,17 +283,18 @@ DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams)
 	RingBufferRetrieved* retrievingBuffer = (*(ThreadArgs*)(lpParams)).retrievingBuffer;
 	CRITICAL_SECTION* cs = (*(ThreadArgs*)(lpParams)).cs;
 	CRITICAL_SECTION* cs2 = (*(ThreadArgs*)(lpParams)).cs2;
+	bool *end= (*(ThreadArgs*)(lpParams)).end;
 
 	short processId=-1;//var for replica Id
 	char* newAddr = inet_ntoa(clientAddr.sin_addr);
 	printf("New replica request accepted  . Replica address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 	message mess;
-	retrievedData data;
+	retrievedData *data;
 	char dataBuffer[BUFFER_SIZE];
 	int iResult;
 	bool flag = false;
 	
-	while (1)
+	while (!(*end))
 	{
 		if (flag == false) {
 			RegisterReplica(&clientSocket, &flag, &processId);
@@ -291,7 +309,41 @@ DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams)
 			}
 			mess = ringBufGetMessage(storingBuffer, cs);
 			if (strcmp(mess.text, "get_data_from_replica") == 0) {
-				MessageForRetreivingData(&clientSocket, &mess, retrievingBuffer, cs2, &processId);			
+				//MessageForRetreivingData(&clientSocket, &mess, retrievingBuffer, cs2, &processId);	
+				////////////////////////////////////////////////////////////////////////////////////
+				int iResult = send(clientSocket, (char*)&mess, (short)sizeof(struct message), 0);
+				// Check result of send function
+				if (iResult == SOCKET_ERROR)
+				{
+					//printf("send failed with error: %d\n", WSAGetLastError());
+					//closesocket(clientSocket);
+					//WSACleanup();
+					//return;
+				}
+				printf("Message for retreiving data successfully sent to replica. Total bytes: %ld\n", mess.text, iResult);
+				while (1)
+				{
+					iResult = recv(clientSocket, dataBuffer, BUFFER_SIZE, 0);
+					if (iResult > 0)
+					{
+						dataBuffer[iResult] = '\0';
+						data = (retrievedData*)dataBuffer;
+						printf("Replica sent : id=%d,text=%s\n", data->processId, data->data);
+						ringBufPutRetrievedData(retrievingBuffer, cs2, *data);
+						printf("Replica %d retrieved data for process.\n", data->processId);
+						break;
+					}
+					else if (iResult == 0)
+					{
+						Sleep(1000);
+					}
+					else
+					{
+						//there was an error during recv
+						printf("recv failed with error: %d RECIVING MESSAGES\n", WSAGetLastError());
+						Sleep(1000);
+					}
+				}
 			}
 			else {
 				MessageForStoring(&clientSocket,&mess);
@@ -300,4 +352,5 @@ DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+	printf("NIT ZA SLANJE REPLIKAMA GOTOVA\n");
 }

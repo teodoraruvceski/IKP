@@ -1,20 +1,24 @@
 #include "Replica.h"
 
-void RetreiveData(SOCKET* connectSocket,struct listItem* head,int* count,struct message* m) {
-	listItem* pom = head;
+void RetreiveData(SOCKET* connectSocket,struct listItem** head,int* count,struct message* m) {
+	listItem* pom = *head;
 	//retrieve data from storage
 	printf("Retrieving data:\n");
 	struct retrievedData data;
-	struct retrievedData retrievedData = *retrieve(&pom, count);
-
-	if (retrievedData.processId == -1)
+	struct retrievedData* retrievedData = retrieve(&pom, count);
+	struct retrievedData value = *retrievedData;
+	if (retrievedData->processId == -1)
 	{
-		retrievedData.processId = m->processId;
+		retrievedData->processId = m->processId;
 	}
-	printf("%s\n", retrievedData.data);
-
-	retrievedData.dataCount = htons(retrievedData.dataCount);
-	int iResult = send(*connectSocket, (char*)&retrievedData, (short)sizeof(struct retrievedData), 0);
+	printf("id:%d\n", value.processId);
+	printf("%s\n", value.data);
+	//char* aaaaaa = (char*)retrievedData;
+	//printf("char*: %s\n",aaaaaa );
+	//printf("dataCount: %d\n", value.dataCount);
+	value.dataCount = htons(value.dataCount);
+	//printf("dataCount converted: %d\n", value.dataCount);
+	int iResult = send(*connectSocket, (char*)&value, (short)sizeof(struct retrievedData), 0);
 	//Check result of send function
 	if (iResult == SOCKET_ERROR)
 	{
@@ -28,10 +32,10 @@ void RetreiveData(SOCKET* connectSocket,struct listItem* head,int* count,struct 
 	printf("Message with retrieved data successfully sent. Total bytes: %ld\n", iResult);
 }
 
-void StoreData(listItem* head, int* count,struct message* m) {
+void StoreData(listItem** head, int* count,struct message* m) {
 	listItem* item = create_new_item(m->text, m->processId);
 	printf("Storing data: %s.\n", item->text, item->processId);
-	add_to_list(item, &head, count);
+	add_to_list(item, head, count);
 }
 
 void ConnectToReplicator2(short id) {
@@ -106,11 +110,11 @@ void ConnectToReplicator2(short id) {
 			printf("Message received from replicator2: %s\n",m.text);
 			if (strcmp(m.text, "get_data_from_replica") == 0)
 			{
-				RetreiveData(&connectSocket,head,&count,&m);
+				RetreiveData(&connectSocket,&head,&count,&m);
 			}
 			else
 			{
-				StoreData(head, &count, &m);
+				StoreData(&head, &count, &m);
 			}
 		}
 		else if (iResult == 0)
@@ -132,6 +136,7 @@ void ConnectToReplicator2(short id) {
 		WSACleanup();
 		return;
 	}
+	destroy_list(&head);
 	Sleep(1000);
 	// Close connected socket
 	closesocket(connectSocket);

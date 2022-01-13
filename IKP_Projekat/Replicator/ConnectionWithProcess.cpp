@@ -3,10 +3,11 @@
 int pBr = -1;
 bool ind = false;
 
-void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs , CRITICAL_SECTION* cs2,SOCKET* clientSocketsProcess)
+void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs ,
+	CRITICAL_SECTION* cs2,SOCKET* clientSocketsProcess, DWORD ListenForRegistrationsThreadID[MAX_CLIENTS],
+HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
 {
-	DWORD ListenForRegistrationsThreadID[MAX_CLIENTS];
-	HANDLE hListenForRegistrationsThread[MAX_CLIENTS];
+	
 	ThreadArgs threadArgs[MAX_CLIENTS];
 	int ids[MAX_CLIENTS];
 	for (int i = 0;i < MAX_CLIENTS;i++)
@@ -113,6 +114,13 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 	ind = false;
 	while (true)
 	{
+		//if key is hit return from function
+		if (_kbhit())
+		{
+			_getch();
+			(*end) = true;
+			break;
+		}
 		// initialize socket set
 		FD_ZERO(&readfds);
 
@@ -141,11 +149,6 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 		}
 		else if (selectResult == 0) // timeout expired
 		{
-			if (_kbhit()) //check if some key is pressed
-			{
-				getch();
-				printf("timeout expired\n");
-			}
 			continue;
 		}
 		else if (FD_ISSET(listenSocket, &readfds))
@@ -190,6 +193,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retri
 				threadArgs[lastIndex].cs = cs;
 				threadArgs[lastIndex].cs2 = cs2;
 				threadArgs[lastIndex].id = lastIndex;
+				threadArgs[lastIndex].end = end;
 
 				hListenForRegistrationsThread[lastIndex] = CreateThread(NULL, 0, &ListenForRegistrationsThread, &threadArgs[lastIndex], 0, &ListenForRegistrationsThreadID[lastIndex]);
 				threadNum++;
@@ -292,6 +296,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	CRITICAL_SECTION* cs= (*(ThreadArgs*)(lpParams)).cs;
 	CRITICAL_SECTION* cs2 = (*(ThreadArgs*)(lpParams)).cs2;
 	int id = (*(ThreadArgs*)(lpParams)).id;
+	bool *end= (*(ThreadArgs*)(lpParams)).end;
 
 	// Sockets used for communication with client
 	bool flag = false;
@@ -303,7 +308,7 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	newProcess.port = ntohs(clientAddr.sin_port);
 	printf("New process request accepted . Process address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 	
-	while (1)
+	while (!(*end))
 	{
 		char dataBuffer[BUFFER_SIZE];
 		int iResult;
@@ -337,4 +342,5 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
+	printf("PROCESS THREAD ENDED\n");
 }

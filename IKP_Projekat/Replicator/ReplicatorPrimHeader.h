@@ -40,16 +40,22 @@ struct ThreadArgs{
     CRITICAL_SECTION* cs;
     CRITICAL_SECTION* cs2;
     int id;
+    bool* end;
 };
 //functions for connection with processes
-void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2,SOCKET* clientSocketsProcess);
+void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,
+    CRITICAL_SECTION* cs2, SOCKET* clientSocketsProcess, DWORD ListenForRegistrationsThreadID[MAX_CLIENTS],
+    HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end);
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
-void RegisterProcess(SOCKET* clientSocket, bool* flag, short* processId, struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
+void RegisterProcess(SOCKET* clientSocket, bool* flag, short* processId, struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs, bool* end);
 void MessageForStoring(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message* newMessage);
 void MessageForRetreivingData(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, struct message* newMessage, SOCKET* clientSocket);
 
 //functions for connections with replicator2
-void ConnectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2,SOCKET *clientSockets,SOCKET *connectSocket);
+void ConnectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs,
+    CRITICAL_SECTION* cs2, SOCKET* clientSockets, SOCKET* connectSocket,
+    DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING], HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING],
+    DWORD ListenForRecvRep2ThreadID[NUMOF_THREADS_RECV], HANDLE hListenForRecvRep2Thread[NUMOF_THREADS_RECV],bool*end);
 //sending to replicator2
 DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams);
 void SendData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* connectSocket);

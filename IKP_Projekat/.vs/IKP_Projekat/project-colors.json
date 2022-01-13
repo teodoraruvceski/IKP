@@ -10,7 +10,22 @@
       "ProjectGuid": "27d37422-ec37-4c43-8590-2e176633b640",
       "DisplayName": "Replicator2",
       "ColorIndex": 1
+    },
+    "8353d574-67aa-47b8-a8af-fd334b98f38e": {
+      "ProjectGuid": "8353d574-67aa-47b8-a8af-fd334b98f38e",
+      "DisplayName": "Process",
+      "ColorIndex": 2
+    },
+    "2fa45ab0-24e9-4dc3-ac3d-1ec4108b80e5": {
+      "ProjectGuid": "2fa45ab0-24e9-4dc3-ac3d-1ec4108b80e5",
+      "DisplayName": "Replicator1",
+      "ColorIndex": 3
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 4
 }

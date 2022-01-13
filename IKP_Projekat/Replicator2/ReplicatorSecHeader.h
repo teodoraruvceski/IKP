@@ -38,6 +38,7 @@ struct ThreadArgs {
     CRITICAL_SECTION* cs;
     CRITICAL_SECTION* cs2;
     int *replics;
+    bool* end;
 };
 
 struct process {
@@ -47,7 +48,9 @@ struct process {
 };
 
 //functions for connection with replicator1
-void ConnectWithReplicator1(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, ThreadArgs* threadArgs2,int replics[]);
+void ConnectWithReplicator1(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, ThreadArgs* threadArgs2, int replics[],
+    DWORD ListenForReplicator1ThreadID[NUMOF_THREADS], HANDLE hListenForReplicator1Thread[NUMOF_THREADS], DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING],
+    HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING],bool *end);
 //sending to replicator1
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams);
 void SendData(RingBufferRetrieved* retrievingBuffer, SOCKET* connectSocket, CRITICAL_SECTION* cs2);
@@ -56,7 +59,8 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams);
 void ReceiveData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSocket, int* replics);
 
 //functions for connection with replicas
-void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, SOCKET* clientSocketsReplica);
+void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, SOCKET* clientSocketsReplica,
+    DWORD ListenForReplicaThreadID[MAX_CLIENTS], HANDLE hListenForReplicaThread[MAX_CLIENTS] , bool* end);
 DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams);
 void RegisterReplica(SOCKET* clientSocket, bool* flag, short* processId);
 void MessageForStoring(SOCKET* clientSocket, struct message* mess);
