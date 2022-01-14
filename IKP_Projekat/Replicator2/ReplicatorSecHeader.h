@@ -26,7 +26,7 @@
 #define SERVER_PORT 27017           /// replicator2 port for 3 threads connection from replicator1
 #define SERVER_PORT_REP1 27018      /// replicator1 port for 3 threads connections from replicator2
 #define REPLICA_LISTEN_PORT 27019   /// replicator2 port for replicas
-#define MAX_CLIENTS 2
+#define MAX_CLIENTS 10
 #define NUMOF_THREADS 3
 #define NUMOF_THREADS_SENDING 3
 

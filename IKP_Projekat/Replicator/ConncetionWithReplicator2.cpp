@@ -1,12 +1,10 @@
 #include "ReplicatorPrimHeader.h"
 
-
+//this function making 6 connection with replicator2, 3 like client and 3 like server, also start 6 threads for these connections
 void ConnectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, 
 	CRITICAL_SECTION* cs2, SOCKET* clientSockets, SOCKET* connectSocket,
 	DWORD ConnectWithReplicator2ThreadID[NUMOF_THREADS_SENDING],HANDLE hConnectWithReplicator2Thread[NUMOF_THREADS_SENDING],
 	DWORD ListenForRecvRep2ThreadID[NUMOF_THREADS_RECV],HANDLE hListenForRecvRep2Thread[NUMOF_THREADS_RECV], bool* end) {
-
-	// Socket used to communicate with server
 	
 	ThreadArgs args[NUMOF_THREADS_RECV];
 	
@@ -235,7 +233,7 @@ void ConnectWithReplicator2(RingBuffer* storingBuffer, RingBufferRetrieved* retr
 
 }
 
-
+//this function taking data from storingBuffer and send data to replicator2
 void SendData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* connectSocket) {
 	message m;
 	char dataBuffer[BUFFER_SIZE];
@@ -254,6 +252,8 @@ void SendData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* connectSo
 	}
 	printf("Sent data to replicator2.\n");
 }
+
+//this function calling Send function in infinite loop, used by 3 threads
 DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	printf("Thread for sending is connected on replicator2.\n");
@@ -283,11 +283,10 @@ DWORD WINAPI SendToReplicator2Thread(LPVOID lpParams) {
 	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("SENDING THREAD ENDED\n");
 	return 0;
 }
 
-
+//this function acceptiong data adn put them to retreivingBuffer
 void ReceiveData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs2, SOCKET* connectSocket) {
 	retrievedData m;
 	char dataBuffer[BUFFER_SIZE];
@@ -309,6 +308,7 @@ void ReceiveData(RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs2, S
 	}
 }
 
+//this function calling Retrieve function in infinite loop, used by 3 threads
 DWORD WINAPI ReceiveFromReplicator2Thread(LPVOID lpParams) {
 	int iResult;
 	retrievedData m;
@@ -327,6 +327,5 @@ DWORD WINAPI ReceiveFromReplicator2Thread(LPVOID lpParams) {
 	// Deinitialize WSA library
 	WSACleanup();
 	closesocket(connectSocket);
-	printf("RECEIVING THREAD ENDED\n");
 	return 0;
 }

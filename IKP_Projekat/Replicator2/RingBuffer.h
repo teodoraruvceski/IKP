@@ -27,7 +27,7 @@ struct RingBuffer {
 	int count;
 	struct message data[RING_SIZE];
 };
-// Operacije za rad sa kruznim baferom 
+// operations for ringBuffer
 struct message ringBufGetMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
 bool ringBufPutMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message m);
 void printBuffer(RingBuffer* storingBuffer, CRITICAL_SECTION* cs);

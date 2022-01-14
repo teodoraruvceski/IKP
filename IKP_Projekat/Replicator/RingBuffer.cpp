@@ -1,6 +1,6 @@
 #include "ReplicatorPrimHeader.h"
 
-
+//operations for ringBuffer
 struct message ringBufGetMessage(RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	message ret;
 	EnterCriticalSection(cs);

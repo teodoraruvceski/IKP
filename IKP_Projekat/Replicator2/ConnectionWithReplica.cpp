@@ -1,5 +1,6 @@
 #include "ReplicatorSecHeader.h"
 
+//this function waiting new replica connections, adn starting new thread for each connection
 void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, SOCKET* clientSocketsReplica,
 	DWORD ListenForReplicaThreadID[MAX_CLIENTS],HANDLE hListenForReplicaThread[MAX_CLIENTS], bool* end)
 {
@@ -195,9 +196,9 @@ void ListenForReplica(RingBuffer* storingBuffer, RingBufferRetrieved* retrieving
 	}
 	closesocket(listenSocket);
 	WSACleanup();
-	printf("GLAVNA NIT GOTOVA\n");
 }
 
+//this functions accept first message from replica
 void RegisterReplica(SOCKET* clientSocket, bool* flag, short* processId) {
 	char dataBuffer[BUFFER_SIZE];
 	message* pointer;
@@ -223,6 +224,7 @@ void RegisterReplica(SOCKET* clientSocket, bool* flag, short* processId) {
 	}
 }
 
+//this function sending request for retreiving data and waiting response from replica
 void MessageForRetreivingData(SOCKET * clientSocket,struct message* mess, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs2, short* processId) {
 	char dataBuffer[BUFFER_SIZE];
 	retrievedData data;
@@ -262,6 +264,7 @@ void MessageForRetreivingData(SOCKET * clientSocket,struct message* mess, RingBu
 	}
 }
 
+//this function sending messages for storing
 void MessageForStoring(SOCKET* clientSocket,struct message *mess) {
 	int iResult = send(*clientSocket, (char*)mess, (short)sizeof(struct message), 0);
 	// Check result of send function
@@ -275,6 +278,7 @@ void MessageForStoring(SOCKET* clientSocket,struct message *mess) {
 	printf("Message with data: %s for replica successfully sent. Total bytes: %ld\n", mess->text, iResult);
 }
 
+//this function trying to get data for replica and calling other functions
 DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams)
 {
 	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
@@ -352,5 +356,4 @@ DWORD WINAPI ConnectionWithReplicaThread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("NIT ZA SLANJE REPLIKAMA GOTOVA\n");
 }

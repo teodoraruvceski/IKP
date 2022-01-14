@@ -1,8 +1,9 @@
 #include "ReplicatorPrimHeader.h"
 
-int pBr = -1;
+int pBr = -1;//for closing process connections
 bool ind = false;
 
+//this function listening for new processes and making threads for each process connection
 void ListenForRegistrations(RingBuffer* storingBuffer,RingBufferRetrieved* retrievingBuffer,CRITICAL_SECTION *cs ,
 	CRITICAL_SECTION* cs2,SOCKET* clientSocketsProcess, DWORD ListenForRegistrationsThreadID[MAX_CLIENTS],
 HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
@@ -35,7 +36,6 @@ HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
-		//return 1;
 		return;
 	}
 
@@ -59,7 +59,6 @@ HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
 	{
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		WSACleanup();
-		//return 1;
 		return;
 	}
 
@@ -72,7 +71,6 @@ HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
 		printf("bind failed with error: %d\n", WSAGetLastError());
 		closesocket(listenSocket);
 		WSACleanup();
-		//return 1;
 		return;
 	}
 
@@ -225,7 +223,7 @@ HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end)
 	closesocket(listenSocket);
 	WSACleanup();
 }
-
+//this function accepting registration(first) message from process and put message to storingBuffer
 void RegisterProcess(SOCKET* clientSocket,bool* flag,short* processId,struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs) {
 	char dataBuffer[BUFFER_SIZE];
 	char* message_;
@@ -254,12 +252,12 @@ void RegisterProcess(SOCKET* clientSocket,bool* flag,short* processId,struct pro
 		}
 	}
 }
-
+//this function store messages to storingBuffer
 void MessageForStoring(RingBuffer* storingBuffer, CRITICAL_SECTION* cs,struct message* newMessage) {
 	printf("Storing message %s from process: %d to buffer.\n", newMessage->text, newMessage->processId);
 	ringBufPutMessage(storingBuffer, cs, *newMessage);
 }
-
+//this function store retrieve message to storingBuffer and wait response in retreivingBuffer and send data to process
 void MessageForRetreivingData(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, struct message* newMessage, SOCKET* clientSocket) {
 	ringBufPutMessage(storingBuffer, cs, *newMessage);
 	while (1)
@@ -286,7 +284,7 @@ void MessageForRetreivingData(RingBuffer* storingBuffer, RingBufferRetrieved* re
 		}
 	}
 }
-
+//this function waiting new messages from process and in depending of message call functions for that message
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 {
 	SOCKET clientSocket = (*(ThreadArgs*)(lpParams)).clientSocket;
@@ -342,5 +340,4 @@ DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("PROCESS THREAD ENDED\n");
 }

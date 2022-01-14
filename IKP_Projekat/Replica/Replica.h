@@ -2,8 +2,6 @@
 #ifndef REPLICA_H_   
 #define REPLICA_H_
 #define WIN32_LEAN_AND_MEAN
-//#define _WINSOCK_DEPRECATED_NO_WARNINGS
-//#define _CRT_SECURE_NO_WARNINGS
 
 #include <windows.h>
 #include <winsock2.h>
@@ -21,7 +19,6 @@
 #define SERVER_PORT 27019 /// port replikatora2 na koj i se konektuju replike
 #define BUFFER_SIZE 4096
 
-#define MAX_CLIENTS 20
 #define NUMOF_THREADS 1
 #define TEXT_SIZE 2048
 
@@ -43,6 +40,7 @@ struct ThreadArgs {
     CRITICAL_SECTION* cs;
 };
 
+//replica functions
 void ConnectToReplicator2(short id);
-void RetreiveData(SOCKET* connectSocket, struct listItem* head, int* count, struct message* m);
+void RetreiveData(SOCKET* connectSocket, struct listItem** head, int* count, struct message* m);
 #endif

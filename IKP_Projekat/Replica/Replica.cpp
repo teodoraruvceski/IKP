@@ -1,5 +1,6 @@
 #include "Replica.h"
 
+//this function get all data from list and send back to replicator2 
 void RetreiveData(SOCKET* connectSocket,struct listItem** head,int* count,struct message* m) {
 	listItem* pom = *head;
 	//retrieve data from storage
@@ -11,13 +12,7 @@ void RetreiveData(SOCKET* connectSocket,struct listItem** head,int* count,struct
 	{
 		retrievedData->processId = m->processId;
 	}
-	printf("id:%d\n", value.processId);
-	printf("%s\n", value.data);
-	//char* aaaaaa = (char*)retrievedData;
-	//printf("char*: %s\n",aaaaaa );
-	//printf("dataCount: %d\n", value.dataCount);
 	value.dataCount = htons(value.dataCount);
-	//printf("dataCount converted: %d\n", value.dataCount);
 	int iResult = send(*connectSocket, (char*)&value, (short)sizeof(struct retrievedData), 0);
 	//Check result of send function
 	if (iResult == SOCKET_ERROR)
@@ -31,13 +26,14 @@ void RetreiveData(SOCKET* connectSocket,struct listItem** head,int* count,struct
 	}
 	printf("Message with retrieved data successfully sent. Total bytes: %ld\n", iResult);
 }
-
+//this function store data to list, calling list operation and store data type of struct message
 void StoreData(listItem** head, int* count,struct message* m) {
 	listItem* item = create_new_item(m->text, m->processId);
 	printf("Storing data: %s.\n", item->text, item->processId);
 	add_to_list(item, head, count);
 }
 
+//function for connection with replicator2, after registration replica send or recive data from replicator2
 void ConnectToReplicator2(short id) {
 	short pId = id;//var for saving process id
 	printf("Replica for process with Id: %d\n", pId);

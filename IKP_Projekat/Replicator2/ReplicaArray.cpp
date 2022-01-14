@@ -1,5 +1,6 @@
 #include "ReplicatorSecHeader.h"
 
+//array for saving replicas ids
 void InitReplicaArray(int array[]) {
 	for (int i = 0;i < MAX_CLIENTS;i++) {
 		array[i] = -1;

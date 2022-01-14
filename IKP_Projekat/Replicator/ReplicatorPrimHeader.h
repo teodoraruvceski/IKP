@@ -2,8 +2,6 @@
 #ifndef REPLICATORPRIM_H_   
 #define REPLICATORPRIM_H_
 #define WIN32_LEAN_AND_MEAN
-//#define _WINSOCK_DEPRECATED_NO_WARNINGS
-//#define _CRT_SECURE_NO_WARNINGS
 
 #include <windows.h>
 #include <winsock2.h>
@@ -21,7 +19,7 @@
 #define SERVER_PORT 27016        /// replicator1 port for processes
 #define SERVER_PORT2 27017       /// replicator2 port for 3 threads connection from replicator1
 #define PORT_RCV_RET_DATA 27018  /// replicator1 port for 3 threads connections from replicator2
-#define MAX_CLIENTS 2
+#define MAX_CLIENTS 10
 #define NUMOF_THREADS_SENDING 3
 #define NUMOF_THREADS_RECV 3
 
@@ -47,7 +45,7 @@ void ListenForRegistrations(RingBuffer* storingBuffer, RingBufferRetrieved* retr
     CRITICAL_SECTION* cs2, SOCKET* clientSocketsProcess, DWORD ListenForRegistrationsThreadID[MAX_CLIENTS],
     HANDLE hListenForRegistrationsThread[MAX_CLIENTS], bool* end);
 DWORD WINAPI ListenForRegistrationsThread(LPVOID lpParams);
-void RegisterProcess(SOCKET* clientSocket, bool* flag, short* processId, struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs, bool* end);
+void RegisterProcess(SOCKET* clientSocket, bool* flag, short* processId, struct process* newProcess, struct message* newMessage, RingBuffer* storingBuffer, CRITICAL_SECTION* cs);
 void MessageForStoring(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, struct message* newMessage);
 void MessageForRetreivingData(RingBuffer* storingBuffer, RingBufferRetrieved* retrievingBuffer, CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, struct message* newMessage, SOCKET* clientSocket);
 

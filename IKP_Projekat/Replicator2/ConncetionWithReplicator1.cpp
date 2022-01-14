@@ -1,5 +1,6 @@
 #include "ReplicatorSecHeader.h"
 
+//this function making 6 connection with replicator1, 3 like client and 3 like server, also start 6 threads for these connections
 void ConnectWithReplicator1(RingBuffer* storingBuffer,RingBufferRetrieved * retrievingBuffer,CRITICAL_SECTION* cs, CRITICAL_SECTION* cs2, ThreadArgs* threadArgs2, int replics[],
 	DWORD ListenForReplicator1ThreadID[NUMOF_THREADS], HANDLE hListenForReplicator1Thread[NUMOF_THREADS],DWORD SendToReplicator1ThreadID[NUMOF_THREADS_SENDING],
 HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING], bool* end)
@@ -230,6 +231,7 @@ HANDLE hSendToReplicator1Thread[NUMOF_THREADS_SENDING], bool* end)
 	printf("\n----------------------------------CONNECTIONS WITH REPLICATOR1 CREATED----------------------------------\n");
 }
 
+//this function store data to storingBuffer or starting new replica
 void ReceiveData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* clientSocket,int* replics) {
 	char dataBuffer[BUFFER_SIZE];
 	char id[4];
@@ -269,7 +271,7 @@ void ReceiveData(RingBuffer* storingBuffer, CRITICAL_SECTION* cs, SOCKET* client
 		}
 	}
 }
-
+//this function calling Receive function in infinite loop, used by 3 threads
 DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 {
 	int iResult;
@@ -291,10 +293,9 @@ DWORD WINAPI ListenForReplicator1Thread(LPVOID lpParams)
 	}
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("NIT ZA PRIJEM GOTOVA\n");
 	return 0;
 }
-
+//this function waiting message in retreivingBuffer and send data to replicator1
 void SendData(RingBufferRetrieved* retrievingBuffer, SOCKET* connectSocket, CRITICAL_SECTION* cs2) {
 	retrievedData m;
 	char dataBuffer[BUFFER_SIZE];
@@ -312,7 +313,7 @@ void SendData(RingBufferRetrieved* retrievingBuffer, SOCKET* connectSocket, CRIT
 	}
 	printf("Sent data to replicator1.\n");
 }
-
+//this function calling Send function in infinite loop, used by 3 threads
 DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	int iResult;
 	printf("Thread for sending is connected on replicator1.\n");
@@ -330,7 +331,6 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 		printf("end:%d\n", (*end));
 		SendData(retrievingBuffer,&connectSocket,cs2);
 	}
-	printf("NIT ZA SLANJE GOTOVA\n");
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);
 	// Check if connection is succesfully shut down.
@@ -346,6 +346,5 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	closesocket(connectSocket);
 	// Deinitialize WSA library
 	WSACleanup();
-	printf("NIT ZA SLANJE GOTOVA\n");
 	return 0;
 }
