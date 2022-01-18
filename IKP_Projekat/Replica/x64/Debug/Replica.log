@@ -1,10 +1,10 @@
 ﻿  List.cpp
   main.cpp
   Replica.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(7,23): warning C4101: 'data': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(37,48): warning C4474: 'printf' : too many arguments passed for format string
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(37,48): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(8,23): warning C4101: 'data': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(32,48): warning C4474: 'printf' : too many arguments passed for format string
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\Replica.cpp(32,48): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
   Generating Code...
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\List.cpp(41): warning C4172: returning address of local variable or temporary: ret
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\List.cpp(54): warning C4172: returning address of local variable or temporary: ret
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Replica\List.cpp(52): warning C4172: returning address of local variable or temporary: ret
   Replica.vcxproj -> D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\x64\Debug\Replica.exe

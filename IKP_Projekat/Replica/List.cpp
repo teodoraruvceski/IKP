@@ -42,13 +42,11 @@ struct retrievedData* retrieve(listItem** head,int *count)
     }
     ret.processId = (*head)->processId;
     ret.dataCount = *count;
-    printf("DataCount:%d\n", ret.dataCount);
     strcpy(ret.data, "");
     for (int i = 0;i < *count;i++)
     {
         strcat(ret.data, (*head)->text);
         strcat(ret.data, "\n");
-        printf("Text: %s\n", ret.data);
         *head = (*head)->next;
     }
     return &ret;
@@ -63,12 +61,14 @@ void destroy_list(listItem** head) {
 }
 void print_list(listItem** head) {
     listItem* pom = *head;
+    printf("=============DATA===========");
     while (1) {
         if (pom == NULL) { // list is empty
             return;
         }
-        printf("!!!!!!PRINT!!!! - %s\n", (*head)->text);
+        printf("%s\n", pom->text);
+        pom = pom->next;
     }
-   
+
 
 }

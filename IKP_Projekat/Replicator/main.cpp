@@ -49,14 +49,14 @@ int main()
 	{
 		CloseHandle(hListenForRecvRep2Thread[i]);
 	}
-	for (int i = 0; i < 1; i++)
+	/*for (int i = 0; i < 1; i++)
 	{
 		try {
 			CloseHandle(hListenForRegistrationsThread[i]);
 		}
 		catch (...) {}
 		
-	}
+	}*/
 	printf("Replicator1 gracefully shut down.");
 	return 0;
 }

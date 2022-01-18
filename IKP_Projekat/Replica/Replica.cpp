@@ -121,7 +121,7 @@ void ConnectToReplicator2(short id) {
 			closesocket(connectSocket);
 		}
 	}
-
+	destroy_list(&head);
 	// Shutdown the connection since we're done
 	iResult = shutdown(connectSocket, SD_BOTH);
 	// Check if connection is succesfully shut down.

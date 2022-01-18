@@ -8,6 +8,7 @@ void Menu(struct message* messageForRepl) {
 		printf("1. Posalji podatke.\n");
 		printf("2. Povuci podatke sa replike.\n");
 		printf("3. Ugasi proces.\n");
+		printf("4. Prikazi podatke.\n");
 		option = _getch();
 		switch (option) {
 			case '1':				
@@ -22,6 +23,10 @@ void Menu(struct message* messageForRepl) {
 				return;
 			case '3':
 				strcpy(messageForRepl->text, "turn_off");
+				free(message);
+				return;
+			case '4':
+				strcpy(messageForRepl->text, "show_data");
 				free(message);
 				return;;
 			default:
@@ -64,7 +69,6 @@ void RecieveData(SOCKET* connectSocket, struct message* messageForRepl, struct l
 	data.dataCount = ntohs(data.dataCount);
 	char delim[] = "\n";
 	char* ptr = strtok(data.data, delim);
-	printf("Data:\n");
 	if (*count > 0)
 	{
 		destroy_list(head);
@@ -73,11 +77,13 @@ void RecieveData(SOCKET* connectSocket, struct message* messageForRepl, struct l
 	
 	while (ptr != NULL)
 	{
-		printf("%s\n", ptr);
+		//printf("%s\n", ptr);
 		add_to_list(create_new_item(ptr, data.processId),head,count);
 		ptr = strtok(NULL, delim);
 	}
+	printf("Data successfully retrieved!\n");
 }
+
 //function for registration and calling process operations 
 void RegisterService() {
 	short* serviceId = (short*)malloc(sizeof(short));
@@ -127,7 +133,7 @@ void RegisterService() {
 	do{
 		printf("\nUnesite id procesa(id mora biti veci od 0): ");
 		scanf("%d", serviceId);
-	} while (serviceId <= 0);
+	} while (*serviceId <= 0);
 
 	*serviceId = htons(*serviceId);
 	iResult = send(connectSocket, (char*)serviceId, (short)sizeof(short), 0);
@@ -140,6 +146,9 @@ void RegisterService() {
 		return;
 	}
 	printf("Registration message with ID successfully sent. Total bytes: %ld\n", iResult);
+	int cntPom = 0;
+	char* cntPomString ;
+	char str[10];
 	while (true)
 	{
 		int option;
@@ -147,6 +156,15 @@ void RegisterService() {
 
 		//Menu for process
 		Menu(&messageForRepl);
+		
+
+		//Automatic sending data to replicator1
+
+		/*strcpy(messageForRepl.text, "text");
+		_itoa(cntPom++, str, 10);
+		strcat(messageForRepl.text, str);
+		Sleep(500);*/
+
 		messageForRepl.serviceId = *serviceId;
 
 		if (strcmp(messageForRepl.text, "get_data_from_replica")==0) {
@@ -156,12 +174,17 @@ void RegisterService() {
 			
 			break;
 		}
+		else if (strcmp(messageForRepl.text, "show_data") == 0) {
+			print_list(&head);
+		}
 		else{
+			//printf("Sent: %s\n", messageForRepl.text);
 			listItem* newItem = create_new_item(messageForRepl.text,* serviceId);
 			add_to_list(newItem, &head, &dataCount);
 			dataCount++;
 			SendData(&connectSocket, &messageForRepl);
 		}		
+		Sleep(2000);
 	}
 	destroy_list(&head);
 	//free(serviceId);

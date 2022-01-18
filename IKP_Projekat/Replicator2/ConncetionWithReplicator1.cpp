@@ -328,7 +328,6 @@ DWORD WINAPI SendToReplicator1Thread(LPVOID lpParams) {
 	//_getch();
 	while (!(*end))
 	{
-		printf("end:%d\n", (*end));
 		SendData(retrievingBuffer,&connectSocket,cs2);
 	}
 	// Shutdown the connection since we're done

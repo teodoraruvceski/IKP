@@ -15,3 +15,4 @@ listItem* create_new_item(char text[], short id);
 void destroy_list(listItem** head);
 
 struct retrievedData* retrieve(listItem** head, int* count);
+void print_list(listItem** head);

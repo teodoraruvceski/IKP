@@ -1,10 +1,11 @@
 ﻿  List.cpp
-  main.cpp
   Process.cpp
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(129,9): warning C4477: 'scanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(129,9): message : consider using '%hd' in the format string
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(93,7): warning C4101: 'dataBuffer': unreferenced local variable
-D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(145,7): warning C4101: 'option': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(136,9): warning C4477: 'scanf' : format string '%d' requires an argument of type 'int *', but variadic argument 1 has type 'short *'
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(136,9): message : consider using '%hd' in the format string
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(100,7): warning C4101: 'dataBuffer': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(151,8): warning C4101: 'cntPomString': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(152,7): warning C4101: 'str': unreferenced local variable
+D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\Process.cpp(155,7): warning C4101: 'option': unreferenced local variable
   Generating Code...
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\List.cpp(40): warning C4172: returning address of local variable or temporary: ret
 D:\tea\Fax\4.godina\1.semestar\ikp\IKP\IKP_Projekat\Process\List.cpp(54): warning C4172: returning address of local variable or temporary: ret

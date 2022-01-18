@@ -61,3 +61,16 @@ void destroy_list(listItem** head) {
         *head = NULL;
     }
 }
+void print_list(listItem** head) {
+    listItem* pom = *head;
+    printf("=============DATA===========\n");
+    while (1) {
+        if (pom == NULL) { // list is empty
+            return;
+        }
+        printf("%s\n", pom->text);
+        pom = pom->next;
+    }
+
+
+}
